@@ -15,23 +15,21 @@ export function Header() {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/">
-          <a className="flex items-center space-x-2">
-            <Logo size="medium" />
-          </a>
+        <Link href="/" className="flex items-center space-x-2">
+          <Logo size="medium" />
         </Link>
         
         {user ? (
           <>
             <nav className="hidden md:flex space-x-6 items-center">
-              <Link href="/dashboard">
-                <a className="text-foreground font-medium hover:text-primary transition-colors">Dashboard</a>
+              <Link href="/dashboard" className="text-foreground font-medium hover:text-primary transition-colors">
+                Dashboard
               </Link>
-              <Link href="/reports">
-                <a className="text-foreground font-medium hover:text-primary transition-colors">Reports</a>
+              <Link href="/reports" className="text-foreground font-medium hover:text-primary transition-colors">
+                Reports
               </Link>
-              <Link href="/settings">
-                <a className="text-foreground font-medium hover:text-primary transition-colors">Settings</a>
+              <Link href="/settings" className="text-foreground font-medium hover:text-primary transition-colors">
+                Settings
               </Link>
               
               <PremiumBadge isPremium={user.subscription === "premium"} />
@@ -55,10 +53,8 @@ export function Header() {
           </>
         ) : (
           <div className="flex items-center space-x-4">
-            <Link href="/connect">
-              <a className="text-foreground font-medium hover:text-primary transition-colors">
-                Connect Snapchat
-              </a>
+            <Link href="/connect" className="text-foreground font-medium hover:text-primary transition-colors">
+              Connect Snapchat
             </Link>
             <Link href="/login">
               <Button variant="outline" size="sm">
