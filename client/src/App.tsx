@@ -8,14 +8,15 @@ import Dashboard from "@/pages/Dashboard";
 import ConnectAccount from "@/pages/ConnectAccount";
 import AuthPage from "@/pages/auth-page";
 import PricingPage from "@/pages/pricing-page";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/connect" component={ConnectAccount} />
+      <ProtectedRoute path="/dashboard" component={Dashboard} />
+      <ProtectedRoute path="/connect" component={ConnectAccount} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/login" component={AuthPage} />
       <Route path="/signup" component={AuthPage} />

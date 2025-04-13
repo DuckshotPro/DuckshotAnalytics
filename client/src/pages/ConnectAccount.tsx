@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { insertSnapchatCredentialsSchema } from "@shared/schema";
 import { useForm } from "react-hook-form";
@@ -15,8 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 export default function ConnectAccount() {
-  const { connectSnapchat, user } = useAuth();
-  const [isConnecting, setIsConnecting] = useState(false);
+  const { connectSnapchatMutation, user } = useAuth();
   const [, navigate] = useLocation();
   const { toast } = useToast();
 
@@ -36,21 +35,14 @@ export default function ConnectAccount() {
 
   const onSubmit = async (data: z.infer<typeof connectFormSchema>) => {
     try {
-      setIsConnecting(true);
-      await connectSnapchat(data.snapchatClientId, data.snapchatApiKey);
-      toast({
-        title: "Success!",
-        description: "Your Snapchat account has been connected.",
+      await connectSnapchatMutation.mutateAsync({
+        snapchatClientId: data.snapchatClientId,
+        snapchatApiKey: data.snapchatApiKey
       });
       navigate("/dashboard");
     } catch (error) {
-      toast({
-        title: "Connection Failed",
-        description: error instanceof Error ? error.message : "Failed to connect your Snapchat account. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsConnecting(false);
+      // Error is already handled by the mutation
+      console.error(error);
     }
   };
 
@@ -104,9 +96,9 @@ export default function ConnectAccount() {
               <Button 
                 type="submit" 
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                disabled={isConnecting}
+                disabled={connectSnapchatMutation.isPending}
               >
-                {isConnecting ? "Connecting..." : "Connect Account"}
+                {connectSnapchatMutation.isPending ? "Connecting..." : "Connect Account"}
               </Button>
               
               <div className="text-center text-sm text-muted-foreground mt-6 pt-6 border-t border-border">

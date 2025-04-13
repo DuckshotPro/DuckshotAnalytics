@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 
 const authSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
@@ -21,8 +21,7 @@ type AuthFormValues = z.infer<typeof authSchema>;
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login, signup, user } = useAuth();
+  const { loginMutation, registerMutation, user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
 
@@ -51,41 +50,27 @@ export default function AuthPage() {
 
   const onLoginSubmit = async (data: AuthFormValues) => {
     try {
-      setIsSubmitting(true);
-      await login(data.username, data.password);
-      toast({
-        title: "Success!",
-        description: "You are now logged in.",
+      await loginMutation.mutateAsync({ 
+        username: data.username, 
+        password: data.password 
       });
       navigate("/dashboard");
     } catch (error) {
-      toast({
-        title: "Login Failed",
-        description: error instanceof Error ? error.message : "Failed to log in. Please check your credentials.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+      // Error is already handled by the mutation
+      console.error(error);
     }
   };
 
   const onRegisterSubmit = async (data: AuthFormValues) => {
     try {
-      setIsSubmitting(true);
-      await signup(data.username, data.password);
-      toast({
-        title: "Account Created!",
-        description: "Your account has been created and you are now logged in.",
+      await registerMutation.mutateAsync({ 
+        username: data.username, 
+        password: data.password 
       });
       navigate("/dashboard");
     } catch (error) {
-      toast({
-        title: "Registration Failed",
-        description: error instanceof Error ? error.message : "Failed to create account. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+      // Error is already handled by the mutation
+      console.error(error);
     }
   };
 
@@ -145,9 +130,9 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    disabled={isSubmitting}
+                    disabled={loginMutation.isPending}
                   >
-                    {isSubmitting ? "Signing in..." : "Sign in"}
+                    {loginMutation.isPending ? "Signing in..." : "Sign in"}
                   </Button>
                 </form>
               </TabsContent>
@@ -183,9 +168,9 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    disabled={isSubmitting}
+                    disabled={registerMutation.isPending}
                   >
-                    {isSubmitting ? "Creating account..." : "Create account"}
+                    {registerMutation.isPending ? "Creating account..." : "Create account"}
                   </Button>
                 </form>
               </TabsContent>
