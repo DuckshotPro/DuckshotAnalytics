@@ -49,7 +49,11 @@ export default function ConnectAccount() {
   // If already connected, redirect to dashboard
   if (user?.snapchatClientId && user?.snapchatApiKey) {
     navigate("/dashboard");
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Redirecting to dashboard...</p>
+      </div>
+    );
   }
 
   return (

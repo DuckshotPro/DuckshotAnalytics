@@ -74,9 +74,20 @@ export default function AuthPage() {
     }
   };
 
-  // If already logged in, don't show this page
+  // If already logged in, show a redirect message
   if (user) {
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <Logo size="medium" className="mx-auto mb-4" />
+          <p className="text-lg mb-2">You are already logged in!</p>
+          <p className="text-muted-foreground mb-4">Redirecting you to the home page...</p>
+          <Button onClick={() => navigate('/')} variant="outline">
+            Go to Home
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
