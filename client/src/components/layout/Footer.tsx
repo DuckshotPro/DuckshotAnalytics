@@ -15,27 +15,27 @@ export function Footer() {
             <div>
               <h4 className="font-medium text-foreground mb-2">Product</h4>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li><Link href="/features"><a className="hover:text-primary transition-colors">Features</a></Link></li>
-                <li><Link href="/pricing"><a className="hover:text-primary transition-colors">Pricing</a></Link></li>
-                <li><Link href="/roadmap"><a className="hover:text-primary transition-colors">Roadmap</a></Link></li>
+                <li><Link href="/features" className="hover:text-primary transition-colors">Features</Link></li>
+                <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
+                <li><Link href="/roadmap" className="hover:text-primary transition-colors">Roadmap</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-medium text-foreground mb-2">Support</h4>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li><Link href="/help"><a className="hover:text-primary transition-colors">Help Center</a></Link></li>
-                <li><Link href="/api-docs"><a className="hover:text-primary transition-colors">API Docs</a></Link></li>
-                <li><Link href="/contact"><a className="hover:text-primary transition-colors">Contact Us</a></Link></li>
+                <li><Link href="/help" className="hover:text-primary transition-colors">Help Center</Link></li>
+                <li><Link href="/api-docs" className="hover:text-primary transition-colors">API Docs</Link></li>
+                <li><Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-medium text-foreground mb-2">Legal</h4>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li><Link href="/privacy"><a className="hover:text-primary transition-colors">Privacy</a></Link></li>
-                <li><Link href="/terms"><a className="hover:text-primary transition-colors">Terms</a></Link></li>
-                <li><Link href="/security"><a className="hover:text-primary transition-colors">Security</a></Link></li>
+                <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link></li>
+                <li><Link href="/terms" className="hover:text-primary transition-colors">Terms</Link></li>
+                <li><Link href="/security" className="hover:text-primary transition-colors">Security</Link></li>
               </ul>
             </div>
           </div>
