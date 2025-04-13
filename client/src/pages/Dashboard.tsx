@@ -9,7 +9,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { PremiumFeature } from "@/components/dashboard/PremiumFeature";
 import { AdSection } from "@/components/dashboard/AdSection";
 import { UpgradePrompt } from "@/components/dashboard/UpgradePrompt";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { useSnapchatData } from "@/hooks/use-snapchat-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -46,8 +46,22 @@ export default function Dashboard() {
     }
   }, [user, isConnected, navigate]);
   
-  if (!user || !isConnected) {
-    return null;
+  // Protected route handles authentication check now
+  // Just check if Snapchat is connected
+  if (!isConnected) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Connect Your Snapchat Account</h1>
+            <p className="mb-4">Please connect your Snapchat account to view your analytics dashboard.</p>
+            <Button onClick={() => navigate('/connect')}>Connect Account</Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
   
   return (
