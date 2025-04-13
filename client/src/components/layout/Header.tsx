@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Logo } from "@/components/common/Logo";
 import { PremiumBadge } from "@/components/common/PremiumBadge";
 import { UserAvatar } from "@/components/common/UserAvatar";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";

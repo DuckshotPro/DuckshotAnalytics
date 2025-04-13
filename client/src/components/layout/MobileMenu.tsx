@@ -1,8 +1,9 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { UserAvatar } from "@/components/common/UserAvatar";
 import { PremiumBadge } from "@/components/common/PremiumBadge";
 import { Logo } from "@/components/common/Logo";
+import { useAuth } from "@/hooks/use-auth";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -12,6 +13,20 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ isOpen, onClose, isPremium, username }: MobileMenuProps) {
+  const { logoutMutation } = useAuth();
+  const [, navigate] = useLocation();
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await logoutMutation.mutateAsync();
+      onClose();
+      navigate('/');
+    } catch (error) {
+      console.error("Failed to logout:", error);
+    }
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="right" className="w-[280px] sm:w-[350px]">
@@ -30,36 +45,38 @@ export function MobileMenu({ isOpen, onClose, isPremium, username }: MobileMenuP
           </div>
           
           <SheetClose asChild>
-            <Link href="/dashboard">
-              <a className="block p-2 hover:bg-muted rounded-md transition-colors">Dashboard</a>
+            <Link href="/dashboard" className="block p-2 hover:bg-muted rounded-md transition-colors">
+              Dashboard
             </Link>
           </SheetClose>
           
           <SheetClose asChild>
-            <Link href="/reports">
-              <a className="block p-2 hover:bg-muted rounded-md transition-colors">Reports</a>
+            <Link href="/reports" className="block p-2 hover:bg-muted rounded-md transition-colors">
+              Reports
             </Link>
           </SheetClose>
           
           <SheetClose asChild>
-            <Link href="/settings">
-              <a className="block p-2 hover:bg-muted rounded-md transition-colors">Settings</a>
+            <Link href="/settings" className="block p-2 hover:bg-muted rounded-md transition-colors">
+              Settings
             </Link>
           </SheetClose>
           
           <SheetClose asChild>
-            <Link href="/support">
-              <a className="block p-2 hover:bg-muted rounded-md transition-colors">Support</a>
+            <Link href="/support" className="block p-2 hover:bg-muted rounded-md transition-colors">
+              Support
             </Link>
           </SheetClose>
           
           <div className="pt-4 mt-4 border-t">
             <SheetClose asChild>
-              <Link href="/logout">
-                <a className="block p-2 text-destructive hover:bg-destructive/10 rounded-md transition-colors">
-                  Logout
-                </a>
-              </Link>
+              <button 
+                onClick={handleLogout} 
+                className="block w-full text-left p-2 text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                disabled={logoutMutation.isPending}
+              >
+                {logoutMutation.isPending ? "Logging out..." : "Logout"}
+              </button>
             </SheetClose>
           </div>
         </div>
