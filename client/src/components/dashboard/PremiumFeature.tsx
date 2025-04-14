@@ -1,6 +1,6 @@
 import { Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
@@ -14,7 +14,7 @@ export function PremiumFeature({ showUpgradeButton = true }: PremiumFeatureProps
   const { user } = useAuth();
   const isPremium = user?.subscription === "premium";
   
-  const { data: aiInsight, isLoading } = useQuery({
+  const { data: aiInsight, isLoading } = useQuery<any>({
     queryKey: ["/api/insights/latest"],
     enabled: isPremium,
   });

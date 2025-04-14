@@ -7,7 +7,7 @@ export function useSnapchatData() {
   const { user } = useAuth();
   const isConnected = !!(user?.snapchatClientId && user?.snapchatApiKey);
   
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<any>({
     queryKey: ["/api/snapchat/data"],
     enabled: isConnected,
   });
