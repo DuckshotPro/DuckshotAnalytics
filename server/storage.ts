@@ -7,6 +7,10 @@ import {
   aiInsights,
   AiInsight,
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -18,155 +22,123 @@ export interface IStorage {
   getLatestSnapchatData(userId: number): Promise<SnapchatData | undefined>;
   saveAiInsight(userId: number, insight: string): Promise<AiInsight>;
   getLatestAiInsight(userId: number): Promise<AiInsight | undefined>;
+  sessionStore: any; // Using any for session store type
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private snapchatData: Map<number, SnapchatData[]>;
-  private aiInsights: Map<number, AiInsight[]>;
-  private currentUserId: number;
-  private currentSnapchatDataId: number;
-  private currentAiInsightId: number;
+export class DatabaseStorage implements IStorage {
+  sessionStore: any; // Type for session store
 
   constructor() {
-    this.users = new Map();
-    this.snapchatData = new Map();
-    this.aiInsights = new Map();
-    this.currentUserId = 1;
-    this.currentSnapchatDataId = 1;
-    this.currentAiInsightId = 1;
-    
-    // Add a demo user
-    this.createUser({
-      username: "demo",
-      password: "demo123",
+    const PostgresSessionStore = connectPg(session);
+    this.sessionStore = new PostgresSessionStore({ 
+      pool, 
+      createTableIfMissing: true
     });
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const now = new Date();
-    const user: User = { 
-      ...insertUser, 
-      id,
+    const [user] = await db.insert(users).values({
+      ...insertUser,
       snapchatClientId: null,
       snapchatApiKey: null,
       subscription: "free",
       subscriptionExpiresAt: null,
-    };
-    this.users.set(id, user);
+    }).returning();
+    
     return user;
   }
 
   async updateUserSnapchatCredentials(userId: number, clientId: string, apiKey: string): Promise<User> {
-    const user = this.users.get(userId);
+    const [user] = await db.update(users)
+      .set({
+        snapchatClientId: clientId,
+        snapchatApiKey: apiKey
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
     if (!user) {
       throw new Error("User not found");
     }
     
-    const updatedUser = { 
-      ...user, 
-      snapchatClientId: clientId, 
-      snapchatApiKey: apiKey 
-    };
-    
-    this.users.set(userId, updatedUser);
-    return updatedUser;
+    return user;
   }
 
   async updateUserSubscription(userId: number, subscription: string, expiresAt: Date | null): Promise<User> {
-    const user = this.users.get(userId);
+    const [user] = await db.update(users)
+      .set({
+        subscription,
+        subscriptionExpiresAt: expiresAt
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
     if (!user) {
       throw new Error("User not found");
     }
     
-    const updatedUser = { 
-      ...user, 
-      subscription,
-      subscriptionExpiresAt: expiresAt 
-    };
-    
-    this.users.set(userId, updatedUser);
-    return updatedUser;
+    return user;
   }
 
   async saveSnapchatData(userId: number, data: any): Promise<SnapchatData> {
-    const id = this.currentSnapchatDataId++;
     const now = new Date();
-    
-    const snapchatDataEntry: SnapchatData = {
-      id,
-      userId,
-      data,
-      fetchedAt: now,
-    };
-    
-    if (!this.snapchatData.has(userId)) {
-      this.snapchatData.set(userId, []);
-    }
-    
-    const userDataEntries = this.snapchatData.get(userId)!;
-    userDataEntries.push(snapchatDataEntry);
-    this.snapchatData.set(userId, userDataEntries);
+    const [snapchatDataEntry] = await db.insert(snapchatData)
+      .values({
+        userId,
+        data,
+        fetchedAt: now
+      })
+      .returning();
     
     return snapchatDataEntry;
   }
 
   async getLatestSnapchatData(userId: number): Promise<SnapchatData | undefined> {
-    const userDataEntries = this.snapchatData.get(userId);
-    if (!userDataEntries || userDataEntries.length === 0) {
-      return undefined;
-    }
+    const [latestData] = await db.select()
+      .from(snapchatData)
+      .where(eq(snapchatData.userId, userId))
+      .orderBy(desc(snapchatData.fetchedAt))
+      .limit(1);
     
-    // Sort by fetchedAt in descending order and return the most recent
-    return userDataEntries.sort((a, b) => 
-      b.fetchedAt.getTime() - a.fetchedAt.getTime()
-    )[0];
+    return latestData;
   }
 
   async saveAiInsight(userId: number, insight: string): Promise<AiInsight> {
-    const id = this.currentAiInsightId++;
     const now = new Date();
+    const [aiInsightEntry] = await db.insert(aiInsights)
+      .values({
+        userId,
+        insight,
+        createdAt: now
+      })
+      .returning();
     
-    const aiInsight: AiInsight = {
-      id,
-      userId,
-      insight,
-      createdAt: now,
-    };
-    
-    if (!this.aiInsights.has(userId)) {
-      this.aiInsights.set(userId, []);
-    }
-    
-    const userInsights = this.aiInsights.get(userId)!;
-    userInsights.push(aiInsight);
-    this.aiInsights.set(userId, userInsights);
-    
-    return aiInsight;
+    return aiInsightEntry;
   }
 
   async getLatestAiInsight(userId: number): Promise<AiInsight | undefined> {
-    const userInsights = this.aiInsights.get(userId);
-    if (!userInsights || userInsights.length === 0) {
-      return undefined;
-    }
+    const [latestInsight] = await db.select()
+      .from(aiInsights)
+      .where(eq(aiInsights.userId, userId))
+      .orderBy(desc(aiInsights.createdAt))
+      .limit(1);
     
-    // Sort by createdAt in descending order and return the most recent
-    return userInsights.sort((a, b) => 
-      b.createdAt.getTime() - a.createdAt.getTime()
-    )[0];
+    return latestInsight;
   }
 }
 
-export const storage = new MemStorage();
+// Import the pool from db.ts
+import { pool } from "./db";
+
+// Switch to DatabaseStorage
+export const storage = new DatabaseStorage();

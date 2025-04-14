@@ -8,9 +8,23 @@ import { z } from "zod";
 import { insertUserSchema, insertSnapchatCredentialsSchema, User } from "@shared/schema";
 import { fetchSnapchatData } from "./services/snapchat";
 import { generateAiInsight } from "./services/gemini";
-import MemoryStore from "memorystore";
+import { scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { promisify } from "util";
 
-const MemorySessionStore = MemoryStore(session);
+const scryptAsync = promisify(scrypt);
+
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
+
+async function comparePasswords(supplied: string, stored: string) {
+  const [hashed, salt] = stored.split(".");
+  const hashedBuf = Buffer.from(hashed, "hex");
+  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+  return timingSafeEqual(hashedBuf, suppliedBuf);
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup session middleware
@@ -20,9 +34,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       resave: false,
       saveUninitialized: false,
       cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
-      store: new MemorySessionStore({
-        checkPeriod: 86400000, // prune expired entries every 24h
-      }),
+      store: storage.sessionStore,
     })
   );
 
@@ -38,7 +50,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (!user) {
           return done(null, false, { message: "Incorrect username" });
         }
-        if (user.password !== password) {
+        if (!(await comparePasswords(password, user.password))) {
           return done(null, false, { message: "Incorrect password" });
         }
         return done(null, user);
@@ -87,8 +99,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists" });
       }
+      
+      // Hash the password before storing it
+      const hashedPassword = await hashPassword(req.body.password);
+      const userData = {
+        ...req.body,
+        password: hashedPassword
+      };
 
-      const user = await storage.createUser(req.body);
+      const user = await storage.createUser(userData);
       req.login(user, (err) => {
         if (err) {
           return res.status(500).json({ message: "Error logging in after signup" });
