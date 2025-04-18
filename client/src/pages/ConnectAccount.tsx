@@ -13,11 +13,17 @@ import { insertSnapchatCredentialsSchema } from "@shared/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { ConsentDialog } from "@/components/consent-dialog";
 
 export default function ConnectAccount() {
   const { connectSnapchatMutation, user } = useAuth();
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [showConsentDialog, setShowConsentDialog] = useState(false);
+  const [pendingCredentials, setPendingCredentials] = useState<{
+    snapchatClientId: string;
+    snapchatApiKey: string;
+  } | null>(null);
 
   // Extend the schema to validate inputs
   const connectFormSchema = insertSnapchatCredentialsSchema.extend({
@@ -33,17 +39,50 @@ export default function ConnectAccount() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof connectFormSchema>) => {
+  const handleConfirmConsent = async () => {
+    if (!pendingCredentials) return;
+    
     try {
+      // Connect with consent = true
       await connectSnapchatMutation.mutateAsync({
-        snapchatClientId: data.snapchatClientId,
-        snapchatApiKey: data.snapchatApiKey
+        ...pendingCredentials,
+        dataConsent: true,
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: "1.0" // Current version of our privacy policy
       });
+      
+      toast({
+        title: "Account connected",
+        description: "Your Snapchat account has been successfully connected.",
+      });
+      
       navigate("/dashboard");
     } catch (error) {
       // Error is already handled by the mutation
       console.error(error);
+    } finally {
+      setPendingCredentials(null);
+      setShowConsentDialog(false);
     }
+  };
+
+  const handleDeclineConsent = () => {
+    setPendingCredentials(null);
+    setShowConsentDialog(false);
+    toast({
+      title: "Connection cancelled",
+      description: "You must provide consent to use this application with your Snapchat account.",
+      variant: "destructive"
+    });
+  };
+
+  const onSubmit = async (data: z.infer<typeof connectFormSchema>) => {
+    // Store credentials and show consent dialog
+    setPendingCredentials({
+      snapchatClientId: data.snapchatClientId,
+      snapchatApiKey: data.snapchatApiKey
+    });
+    setShowConsentDialog(true);
   };
 
   // If already connected, redirect to dashboard
@@ -114,6 +153,15 @@ export default function ConnectAccount() {
       </main>
       
       <Footer />
+      
+      {/* Consent Dialog */}
+      <ConsentDialog
+        open={showConsentDialog}
+        onOpenChange={setShowConsentDialog}
+        onConfirm={handleConfirmConsent}
+        onDecline={handleDeclineConsent}
+        providerName="Snapchat"
+      />
     </div>
   );
 }

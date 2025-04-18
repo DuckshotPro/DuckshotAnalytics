@@ -6,39 +6,36 @@
  */
 
 import { db, pool } from "../server/db";
-import { users, oauthTokens } from "../shared/schema";
+import { users, oauthTokens, consentLogs } from "../shared/schema";
 import { sql } from "drizzle-orm";
 
 async function updateSchema() {
   console.log("Updating database schema...");
 
   try {
-    // Add profile_picture_url column to users table if it doesn't exist
+    // Add consent-related columns to users table
     await db.execute(sql`
       ALTER TABLE ${users}
-      ADD COLUMN IF NOT EXISTS profile_picture_url TEXT,
-      ADD COLUMN IF NOT EXISTS display_name TEXT,
-      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT now() NOT NULL,
-      ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT now() NOT NULL
+      ADD COLUMN IF NOT EXISTS data_consent BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS consent_date TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS privacy_policy_version TEXT
     `);
-    console.log("Updated users table schema.");
+    console.log("Added consent-related columns to users table.");
 
-    // Create oauth_tokens table if it doesn't exist
+    // Create consent_logs table if it doesn't exist
     await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS ${oauthTokens} (
+      CREATE TABLE IF NOT EXISTS ${consentLogs} (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        provider TEXT NOT NULL,
-        provider_user_id TEXT NOT NULL,
-        access_token TEXT NOT NULL,
-        refresh_token TEXT,
-        scope TEXT,
-        expires_at TIMESTAMP,
-        created_at TIMESTAMP DEFAULT now() NOT NULL,
-        updated_at TIMESTAMP DEFAULT now() NOT NULL
+        action TEXT NOT NULL,
+        detail TEXT,
+        privacy_policy_version TEXT,
+        ip_address TEXT,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT now() NOT NULL
       )
     `);
-    console.log("Created oauth_tokens table if it didn't exist.");
+    console.log("Created consent_logs table if it didn't exist.");
 
     console.log("Database schema update completed successfully!");
   } catch (error) {

@@ -125,6 +125,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertSnapchatCredentialsSchema = createInsertSchema(users).pick({
   snapchatClientId: true,
   snapchatApiKey: true,
+  dataConsent: true,
+  consentDate: true,
+  privacyPolicyVersion: true,
 });
 
 /**
