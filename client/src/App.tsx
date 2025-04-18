@@ -55,6 +55,7 @@ function Router() {
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <ProtectedRoute path="/reports" component={ReportsPage} />
       <ProtectedRoute path="/help" component={HelpPage} />
+      <ProtectedRoute path="/data-management" component={React.lazy(() => import("@/pages/data-management"))} />
       
       {/* 404 Not Found Route */}
       <Route component={NotFound} />

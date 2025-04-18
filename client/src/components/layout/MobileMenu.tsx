@@ -63,8 +63,14 @@ export function MobileMenu({ isOpen, onClose, isPremium, username }: MobileMenuP
           </SheetClose>
           
           <SheetClose asChild>
-            <Link href="/support" className="block p-2 hover:bg-muted rounded-md transition-colors">
-              Support
+            <Link href="/help" className="block p-2 hover:bg-muted rounded-md transition-colors">
+              Help
+            </Link>
+          </SheetClose>
+          
+          <SheetClose asChild>
+            <Link href="/data-management" className="block p-2 hover:bg-muted rounded-md transition-colors">
+              Data Privacy
             </Link>
           </SheetClose>
           

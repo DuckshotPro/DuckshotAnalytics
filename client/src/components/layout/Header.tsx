@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User, Menu, BarChart } from "lucide-react";
+import { LogOut, Settings, User, Menu, BarChart, Shield, Lock } from "lucide-react";
 
 export function Header() {
   const { user, logoutMutation } = useAuth();
@@ -72,6 +72,12 @@ export function Header() {
                     <Link href="/settings" className="flex cursor-pointer items-center">
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/data-management" className="flex cursor-pointer items-center">
+                      <Shield className="mr-2 h-4 w-4" />
+                      <span>Data Privacy</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

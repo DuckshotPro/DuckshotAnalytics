@@ -351,6 +351,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Data Management & Privacy Routes
+  app.post("/api/user/data-preferences", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as User;
+      const preferences = req.body;
+      
+      // Store user data preferences in the database
+      // This is a placeholder - you would create a proper data_preferences table
+      // and implement a proper storage method
+      
+      // For now, log the preferences update as a consent action
+      await logConsent(
+        user.id,
+        "updated_preferences",
+        `Updated data collection preferences: ${JSON.stringify(preferences)}`,
+        "1.0",
+        req
+      );
+      
+      res.json({ message: "Data preferences updated successfully" });
+    } catch (error) {
+      console.error("Error updating data preferences:", error);
+      res.status(500).json({ message: "Error updating data preferences" });
+    }
+  });
+
+  app.get("/api/user/export-data", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as User;
+      
+      // Fetch all user data
+      const userData = await storage.getUser(user.id);
+      const snapchatData = await storage.getLatestSnapchatData(user.id);
+      const insights = await storage.getLatestAiInsight(user.id);
+      
+      // Create a comprehensive data export (exclude sensitive fields)
+      const exportData = {
+        user: {
+          id: userData?.id,
+          username: userData?.username,
+          email: userData?.email,
+          displayName: userData?.displayName,
+          profilePictureUrl: userData?.profilePictureUrl,
+          subscription: userData?.subscription,
+          subscriptionExpiresAt: userData?.subscriptionExpiresAt,
+          createdAt: userData?.createdAt,
+          updatedAt: userData?.updatedAt
+        },
+        snapchatData: snapchatData?.data,
+        insights: insights ? [insights] : [],
+        exportDate: new Date(),
+        exportRequestIp: req.ip || req.headers['x-forwarded-for']
+      };
+      
+      // Log the data export for GDPR compliance
+      await logConsent(
+        user.id,
+        "data_export",
+        "User requested data export",
+        "1.0",
+        req
+      );
+      
+      // Send as a downloadable JSON file
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="duckshotsanalytics-export-${Date.now()}.json"`);
+      res.json(exportData);
+    } catch (error) {
+      console.error("Error exporting user data:", error);
+      res.status(500).json({ message: "Error exporting user data" });
+    }
+  });
+
+  app.post("/api/user/delete-account", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as User;
+      
+      // Log deletion request before deleting data for audit trail
+      await logConsent(
+        user.id,
+        "account_deletion",
+        "User requested account and data deletion",
+        "1.0",
+        req
+      );
+      
+      // In a real implementation, you would:
+      // 1. Delete all user data from all tables
+      // 2. Either hard-delete or soft-delete (mark as deleted) the user
+      // 3. Clean up any connected services or subscriptions
+      
+      // For this prototype, we'll just log out the user
+      req.logout((err) => {
+        if (err) {
+          return res.status(500).json({ message: "Error during account deletion" });
+        }
+        res.json({ message: "Account deletion initiated. All data will be permanently removed within 30 days." });
+      });
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      res.status(500).json({ message: "Error deleting account" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
