@@ -22,15 +22,27 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),                            // Unique identifier for the user
   username: text("username").notNull().unique(),            // Username for authentication (must be unique)
   password: text("password").notNull(),                     // Hashed password
+  email: text("email"),                                     // User's email address for communications
   snapchatClientId: text("snapchat_client_id"),             // Snapchat API client ID
   snapchatApiKey: text("snapchat_api_key"),                 // Snapchat API key
   subscription: text("subscription").default("free").notNull(), // Subscription tier ("free" or "premium")
   subscriptionExpiresAt: timestamp("subscription_expires_at"), // When the subscription expires (null for free tier or lifetime)
   profilePictureUrl: text("profile_picture_url"),           // URL to user's profile picture (often from OAuth)
   displayName: text("display_name"),                        // User's display name (often from OAuth)
+  
+  // Privacy and consent fields
   dataConsent: boolean("data_consent").default(false),      // Whether user has consented to data collection
   consentDate: timestamp("consent_date"),                   // When the user gave consent
   privacyPolicyVersion: text("privacy_policy_version"),     // Version of privacy policy that was accepted
+  
+  // Data collection preferences
+  allowAnalytics: boolean("allow_analytics").default(true),           // Allow collection of analytics data
+  allowDemographics: boolean("allow_demographics").default(true),     // Allow collection of demographic data
+  allowLocationData: boolean("allow_location_data").default(false),   // Allow collection of location data
+  allowContentAnalysis: boolean("allow_content_analysis").default(true), // Allow analysis of content
+  allowThirdPartySharing: boolean("allow_third_party").default(false),  // Allow sharing with third parties
+  allowMarketing: boolean("allow_marketing").default(false),            // Allow marketing communications
+  
   createdAt: timestamp("created_at").defaultNow().notNull(), // When the user account was created
   updatedAt: timestamp("updated_at").defaultNow().notNull(), // When the user account was last updated
 });
@@ -114,6 +126,7 @@ export const consentLogs = pgTable("consent_logs", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  email: true,
 });
 
 /**
@@ -128,6 +141,21 @@ export const insertSnapchatCredentialsSchema = createInsertSchema(users).pick({
   dataConsent: true,
   consentDate: true,
   privacyPolicyVersion: true,
+});
+
+/**
+ * User Data Preferences Schema
+ * 
+ * Zod schema for validating user data privacy preferences
+ * Used for GDPR/CCPA compliance and user data control
+ */
+export const userDataPreferencesSchema = createInsertSchema(users).pick({
+  allowAnalytics: true,
+  allowDemographics: true,
+  allowLocationData: true,
+  allowContentAnalysis: true,
+  allowThirdPartySharing: true,
+  allowMarketing: true,
 });
 
 /**
@@ -177,6 +205,7 @@ export const insertAiInsightSchema = createInsertSchema(aiInsights).pick({
 export type User = typeof users.$inferSelect;                  // Type for a user record
 export type InsertUser = z.infer<typeof insertUserSchema>;     // Type for inserting a new user
 export type SnapchatCredentials = z.infer<typeof insertSnapchatCredentialsSchema>; // Type for Snapchat credentials
+export type UserDataPreferences = z.infer<typeof userDataPreferencesSchema>; // Type for user data privacy preferences
 export type OAuthToken = typeof oauthTokens.$inferSelect;      // Type for an OAuth token record
 export type InsertOAuthToken = z.infer<typeof insertOAuthTokenSchema>; // Type for inserting an OAuth token
 export type SnapchatData = typeof snapchatData.$inferSelect;   // Type for a Snapchat data record

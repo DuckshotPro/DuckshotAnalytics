@@ -8,11 +8,19 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage, logConsent } from "./storage";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { z } from "zod";
-import { insertUserSchema, insertSnapchatCredentialsSchema, User } from "@shared/schema";
+import { 
+  insertUserSchema, 
+  insertSnapchatCredentialsSchema, 
+  userDataPreferencesSchema,
+  users, 
+  User 
+} from "@shared/schema";
 import { fetchSnapchatData } from "./services/snapchat";
 import { generateAiInsight } from "./services/gemini";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
@@ -357,23 +365,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = req.user as User;
       const preferences = req.body;
       
-      // Store user data preferences in the database
-      // This is a placeholder - you would create a proper data_preferences table
-      // and implement a proper storage method
+      // Validate the preferences using the userDataPreferencesSchema
+      const validatedPrefs = userDataPreferencesSchema.parse(preferences);
       
-      // For now, log the preferences update as a consent action
+      // Update user data preferences in the database
+      await db
+        .update(users)
+        .set({
+          allowAnalytics: validatedPrefs.allowAnalytics,
+          allowDemographics: validatedPrefs.allowDemographics,
+          allowLocationData: validatedPrefs.allowLocationData,
+          allowContentAnalysis: validatedPrefs.allowContentAnalysis,
+          allowThirdPartySharing: validatedPrefs.allowThirdPartySharing,
+          allowMarketing: validatedPrefs.allowMarketing,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, user.id));
+      
+      // Log the preferences update as a consent action
       await logConsent(
         user.id,
         "updated_preferences",
-        `Updated data collection preferences: ${JSON.stringify(preferences)}`,
+        `Updated data collection preferences: ${JSON.stringify(validatedPrefs)}`,
         "1.0",
         req
       );
       
-      res.json({ message: "Data preferences updated successfully" });
+      res.json({ 
+        message: "Data preferences updated successfully",
+        preferences: validatedPrefs
+      });
     } catch (error) {
       console.error("Error updating data preferences:", error);
       res.status(500).json({ message: "Error updating data preferences" });
+    }
+  });
+  
+  // Handle user consent submissions
+  app.post("/api/user/consent", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as User;
+      const { consent, preferences, timestamp } = req.body;
+      
+      if (consent === undefined) {
+        return res.status(400).json({ message: "Consent value is required" });
+      }
+      
+      // Update user consent status in the database
+      await db
+        .update(users)
+        .set({
+          dataConsent: consent,
+          consentDate: new Date(timestamp),
+          privacyPolicyVersion: "1.0", // Current privacy policy version
+          // Also update preferences if provided
+          ...(preferences && {
+            allowAnalytics: preferences.analyticsConsent,
+            allowDemographics: preferences.demographicsConsent,
+            allowContentAnalysis: preferences.contentAnalysisConsent,
+            allowThirdPartySharing: preferences.thirdPartyConsent,
+            allowMarketing: preferences.marketingConsent
+          }),
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, user.id));
+      
+      // Log the consent action
+      await logConsent(
+        user.id,
+        consent ? "consent_granted" : "consent_declined",
+        `User ${consent ? "granted" : "declined"} consent with preferences: ${JSON.stringify(preferences)}`,
+        "1.0",
+        req
+      );
+      
+      res.json({ 
+        message: `Consent preferences ${consent ? "accepted" : "declined"} successfully`,
+        consentStatus: consent
+      });
+    } catch (error) {
+      console.error("Error saving consent:", error);
+      res.status(500).json({ message: "Error saving consent preferences" });
     }
   });
 
@@ -391,13 +463,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user: {
           id: userData?.id,
           username: userData?.username,
-          email: userData?.email,
+          email: userData?.email || null,
           displayName: userData?.displayName,
           profilePictureUrl: userData?.profilePictureUrl,
           subscription: userData?.subscription,
           subscriptionExpiresAt: userData?.subscriptionExpiresAt,
           createdAt: userData?.createdAt,
-          updatedAt: userData?.updatedAt
+          updatedAt: userData?.updatedAt,
+          // Include data privacy preferences
+          dataPrivacy: {
+            allowAnalytics: userData?.allowAnalytics,
+            allowDemographics: userData?.allowDemographics,
+            allowLocationData: userData?.allowLocationData,
+            allowContentAnalysis: userData?.allowContentAnalysis,
+            allowThirdPartySharing: userData?.allowThirdPartySharing,
+            allowMarketing: userData?.allowMarketing,
+          }
         },
         snapchatData: snapchatData?.data,
         insights: insights ? [insights] : [],
