@@ -28,6 +28,9 @@ export const users = pgTable("users", {
   subscriptionExpiresAt: timestamp("subscription_expires_at"), // When the subscription expires (null for free tier or lifetime)
   profilePictureUrl: text("profile_picture_url"),           // URL to user's profile picture (often from OAuth)
   displayName: text("display_name"),                        // User's display name (often from OAuth)
+  dataConsent: boolean("data_consent").default(false),      // Whether user has consented to data collection
+  consentDate: timestamp("consent_date"),                   // When the user gave consent
+  privacyPolicyVersion: text("privacy_policy_version"),     // Version of privacy policy that was accepted
   createdAt: timestamp("created_at").defaultNow().notNull(), // When the user account was created
   updatedAt: timestamp("updated_at").defaultNow().notNull(), // When the user account was last updated
 });
@@ -81,6 +84,25 @@ export const aiInsights = pgTable("ai_insights", {
   userId: integer("user_id").notNull(),            // Foreign key to the users table
   insight: text("insight").notNull(),              // The AI-generated insight text
   createdAt: timestamp("created_at").defaultNow().notNull(), // When the insight was generated
+});
+
+/**
+ * Consent Logs Table
+ * 
+ * Tracks all user consent-related activities for compliance:
+ * - Records when users give or withdraw consent
+ * - Stores IP address and user agent for audit purposes
+ * - Maintains a detailed log for GDPR compliance
+ */
+export const consentLogs = pgTable("consent_logs", {
+  id: serial("id").primaryKey(),                   // Unique identifier for the log entry
+  userId: integer("user_id").notNull(),            // Foreign key to the users table
+  action: text("action").notNull(),                // Action type ("granted", "withdrawn", "updated")
+  detail: text("detail"),                          // Additional details about the consent action
+  privacyPolicyVersion: text("privacy_policy_version"), // Version of privacy policy referenced
+  ipAddress: text("ip_address"),                   // User's IP address when consent was given/withdrawn
+  userAgent: text("user_agent"),                   // User's browser/device information
+  createdAt: timestamp("created_at").defaultNow().notNull(), // When the consent action occurred
 });
 
 /**
@@ -158,3 +180,21 @@ export type SnapchatData = typeof snapchatData.$inferSelect;   // Type for a Sna
 export type InsertSnapchatData = z.infer<typeof insertSnapchatDataSchema>; // Type for inserting Snapchat data
 export type AiInsight = typeof aiInsights.$inferSelect;        // Type for an AI insight record
 export type InsertAiInsight = z.infer<typeof insertAiInsightSchema>; // Type for inserting an AI insight
+
+/**
+ * Consent Log Insertion Schema
+ * 
+ * Zod schema for validating consent log insertion
+ * Used when recording user consent actions
+ */
+export const insertConsentLogSchema = createInsertSchema(consentLogs).pick({
+  userId: true,
+  action: true,
+  detail: true,
+  privacyPolicyVersion: true,
+  ipAddress: true,
+  userAgent: true,
+});
+
+export type ConsentLog = typeof consentLogs.$inferSelect;       // Type for a consent log record
+export type InsertConsentLog = z.infer<typeof insertConsentLogSchema>; // Type for inserting a consent log

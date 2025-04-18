@@ -5,6 +5,7 @@
  * including routing, state management providers, and global UI components.
  */
 
+import React, { Suspense } from "react";
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -39,6 +40,14 @@ function Router() {
       <Route path="/login" component={AuthPage} />
       <Route path="/signup" component={AuthPage} />
       <Route path="/pricing" component={PricingPage} />
+      <Route path="/privacy-policy">
+        <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+          {(() => {
+            const PrivacyPolicy = React.lazy(() => import("@/pages/privacy-policy"));
+            return <PrivacyPolicy />;
+          })()}
+        </Suspense>
+      </Route>
       
       {/* Protected Routes (require authentication) */}
       <ProtectedRoute path="/dashboard" component={Dashboard} />
