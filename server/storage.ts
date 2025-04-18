@@ -59,7 +59,11 @@ export interface IStorage {
    * @param apiKey - Snapchat API key
    * @returns The updated user object
    */
-  updateUserSnapchatCredentials(userId: number, clientId: string, apiKey: string): Promise<User>;
+  updateUserSnapchatCredentials(userId: number, clientId: string, apiKey: string, consentData?: {
+    dataConsent: boolean;
+    consentDate: Date | null;
+    privacyPolicyVersion: string | null;
+  }): Promise<User>;
   
   /**
    * Updates a user's subscription status
@@ -131,6 +135,31 @@ export interface IStorage {
    * @returns The updated user
    */
   updateUserProfile(userId: number, displayName?: string, profilePictureUrl?: string): Promise<User>;
+  
+  /**
+   * Updates a user's data privacy preferences
+   * @param userId - The user's ID
+   * @param preferences - The data privacy preferences to update
+   * @returns The updated user
+   */
+  updateUserDataPreferences(userId: number, preferences: {
+    allowAnalytics?: boolean;
+    allowDemographics?: boolean;
+    allowLocationData?: boolean;
+    allowContentAnalysis?: boolean;
+    allowThirdPartySharing?: boolean;
+    allowMarketing?: boolean;
+  }): Promise<User>;
+  
+  /**
+   * Updates a user's consent status
+   * @param userId - The user's ID
+   * @param dataConsent - Whether the user consents to data collection
+   * @param consentDate - When the consent was given
+   * @param privacyPolicyVersion - The version of the privacy policy accepted
+   * @returns The updated user
+   */
+  updateUserConsent(userId: number, dataConsent: boolean, consentDate: Date, privacyPolicyVersion: string): Promise<User>;
   
   /**
    * Session store for persistence
@@ -446,6 +475,86 @@ export class DatabaseStorage implements IStorage {
     
     const [user] = await db.update(users)
       .set(updateData)
+      .where(eq(users.id, userId))
+      .returning();
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    return user;
+  }
+
+  /**
+   * Updates a user's data privacy preferences
+   * @param userId - The user's ID
+   * @param preferences - The data privacy preferences to update
+   * @returns The updated user
+   */
+  async updateUserDataPreferences(userId: number, preferences: {
+    allowAnalytics?: boolean;
+    allowDemographics?: boolean;
+    allowLocationData?: boolean;
+    allowContentAnalysis?: boolean;
+    allowThirdPartySharing?: boolean;
+    allowMarketing?: boolean;
+  }): Promise<User> {
+    const updateData: any = {};
+    
+    if (preferences.allowAnalytics !== undefined) {
+      updateData.allowAnalytics = preferences.allowAnalytics;
+    }
+    
+    if (preferences.allowDemographics !== undefined) {
+      updateData.allowDemographics = preferences.allowDemographics;
+    }
+    
+    if (preferences.allowLocationData !== undefined) {
+      updateData.allowLocationData = preferences.allowLocationData;
+    }
+    
+    if (preferences.allowContentAnalysis !== undefined) {
+      updateData.allowContentAnalysis = preferences.allowContentAnalysis;
+    }
+    
+    if (preferences.allowThirdPartySharing !== undefined) {
+      updateData.allowThirdPartySharing = preferences.allowThirdPartySharing;
+    }
+    
+    if (preferences.allowMarketing !== undefined) {
+      updateData.allowMarketing = preferences.allowMarketing;
+    }
+    
+    updateData.updatedAt = new Date();
+    
+    const [user] = await db.update(users)
+      .set(updateData)
+      .where(eq(users.id, userId))
+      .returning();
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    return user;
+  }
+  
+  /**
+   * Updates a user's consent status
+   * @param userId - The user's ID
+   * @param dataConsent - Whether the user consents to data collection
+   * @param consentDate - When the consent was given
+   * @param privacyPolicyVersion - The version of the privacy policy accepted
+   * @returns The updated user
+   */
+  async updateUserConsent(userId: number, dataConsent: boolean, consentDate: Date, privacyPolicyVersion: string): Promise<User> {
+    const [user] = await db.update(users)
+      .set({
+        dataConsent,
+        consentDate,
+        privacyPolicyVersion,
+        updatedAt: new Date()
+      })
       .where(eq(users.id, userId))
       .returning();
     
