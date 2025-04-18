@@ -1,9 +1,33 @@
 #!/bin/bash
 
-# Check if a backup file is provided
+# ==============================================================================
+# DuckShots SnapAlytics - Database Restore Script
+# ==============================================================================
+#
+# This script restores a PostgreSQL database from a backup file created by
+# the backup-database.sh script. It imports all tables and data from the
+# SQL file into the database.
+#
+# CAUTION: This will overwrite existing data in the database!
+#
+# Usage:
+#   bash scripts/restore-database.sh <backup_file_path>
+#
+# Requirements:
+#   - PostgreSQL client tools (psql)
+#   - Database connection environment variables must be set
+#   - The backup file must exist
+#
+# Author: DuckShots SnapAlytics Team
+# ==============================================================================
+
+# Exit immediately if a command fails
+set -e
+
+# Check if a backup file was specified
 if [ -z "$1" ]; then
   echo "Error: No backup file specified."
-  echo "Usage: $0 <backup_file>"
+  echo "Usage: bash scripts/restore-database.sh <backup_file_path>"
   exit 1
 fi
 
@@ -11,36 +35,39 @@ BACKUP_FILE="$1"
 
 # Check if the backup file exists
 if [ ! -f "$BACKUP_FILE" ]; then
-  echo "Error: Backup file '$BACKUP_FILE' not found."
+  echo "Error: Backup file '$BACKUP_FILE' does not exist."
   exit 1
 fi
 
-# Check if required environment variables are set
-if [ -z "$PGUSER" ] || [ -z "$PGHOST" ] || [ -z "$PGDATABASE" ]; then
-  echo "Error: Required environment variables (PGUSER, PGHOST, PGDATABASE) are not set."
+# Check if database environment variables are set
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL environment variable not set."
+  echo "Please set the required database connection variables."
   exit 1
 fi
 
-echo "Restoring PostgreSQL database from backup..."
-echo "Database: $PGDATABASE"
-echo "Host: $PGHOST"
-echo "User: $PGUSER"
+echo "======================================================"
+echo "                DATABASE RESTORE WARNING               "
+echo "======================================================"
+echo "You are about to restore the database from a backup."
+echo "This will OVERWRITE ALL EXISTING DATA in the database."
+echo ""
 echo "Backup file: $BACKUP_FILE"
+echo "Target database: $DATABASE_URL"
+echo ""
+echo "Are you sure you want to continue? (yes/no)"
+read -r CONFIRM
 
-# Check if the file is compressed
-if [[ "$BACKUP_FILE" == *.gz ]]; then
-  echo "Decompressing backup file..."
-  gunzip -c "$BACKUP_FILE" | psql -h $PGHOST -U $PGUSER -d $PGDATABASE
-  RESTORE_RESULT=$?
-else
-  # Restore the database using psql
-  psql -h $PGHOST -U $PGUSER -d $PGDATABASE < "$BACKUP_FILE"
-  RESTORE_RESULT=$?
+if [ "$CONFIRM" != "yes" ]; then
+  echo "Restore canceled."
+  exit 0
 fi
 
-if [ $RESTORE_RESULT -eq 0 ]; then
-  echo "Database restored successfully from $BACKUP_FILE"
-else
-  echo "Error: Database restoration failed."
-  exit 1
-fi
+echo "Starting database restore..."
+
+# Restore from backup
+psql "$DATABASE_URL" < "$BACKUP_FILE"
+
+echo "Restore completed successfully!"
+echo ""
+echo "Note: You may need to restart the application to see the changes."
