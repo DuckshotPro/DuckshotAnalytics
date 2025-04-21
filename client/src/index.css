@@ -4,35 +4,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 100%;
+    --background: 0 0% 98%;
+    --foreground: 224 71.4% 4.1%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%;
+    --card-foreground: 224 71.4% 4.1%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%;
+    --popover-foreground: 224 71.4% 4.1%;
 
-    --primary: 270 80% 50%;
+    --primary: 325 90% 66%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 90%;
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 330 100% 96%;
+    --secondary-foreground: 335 78% 60%;
 
-    --muted: 0 0% 90%;
-    --muted-foreground: 0 0% 50%;
+    --muted: 326 15% 92%;
+    --muted-foreground: 325 10% 40%;
 
-    --accent: 39 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 325 85% 90%;
+    --accent-foreground: 325 78% 40%;
 
     --destructive: 0 100% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 86%;
-    --input: 0 0% 86%;
-    --ring: 60 100% 50%;
+    --border: 325 10% 86%;
+    --input: 325 10% 86%;
+    --ring: 325 90% 66%;
 
-    --radius: 0.5rem;
+    --radius: 0.6rem;
   }
 
   * {
@@ -40,7 +40,8 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased text-foreground;
+    background: linear-gradient(135deg, #fcf5ff 0%, #f9f0ff 100%);
   }
 }
 
@@ -50,11 +51,33 @@
   }
 
   .premium-badge {
-    @apply absolute top-2 right-2 px-2 py-0.5 rounded-md text-xs font-semibold bg-accent text-white;
+    @apply absolute top-2 right-2 px-2 py-0.5 rounded-md text-xs font-semibold text-white;
+    background: linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
   }
 
   .float-animation {
     animation: float 3s ease-in-out infinite;
+  }
+
+  .pink-gradient-bg {
+    background: linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
+  }
+
+  .pink-gradient-text {
+    background: linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .pink-gradient-border {
+    border: 2px solid transparent;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, white, white), linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
+  }
+
+  .pink-glow {
+    box-shadow: 0 0 15px rgba(255, 103, 229, 0.5);
   }
 
   @keyframes float {

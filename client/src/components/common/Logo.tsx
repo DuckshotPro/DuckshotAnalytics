@@ -15,7 +15,7 @@ export function Logo({ size = "medium", withText = true, className }: LogoProps)
 
   return (
     <div className={cn("flex items-center space-x-2", className)}>
-      <div className={cn("bg-primary rounded-full flex items-center justify-center float-animation", sizeClasses[size])}>
+      <div className={cn("pink-gradient-bg rounded-full flex items-center justify-center float-animation pink-glow", sizeClasses[size])}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -36,7 +36,7 @@ export function Logo({ size = "medium", withText = true, className }: LogoProps)
       {withText && (
         <div>
           <h1 className={cn("font-bold", size === "large" ? "text-2xl" : "text-xl", "text-foreground")}>
-            <span className="text-primary">Duck</span>Shots <span className="font-normal">SnapAlytics</span>
+            <span className="pink-gradient-text">DuckShot</span> <span className="font-normal">Analytics</span>
           </h1>
         </div>
       )}
