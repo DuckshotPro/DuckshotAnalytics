@@ -46,6 +46,27 @@
 }
 
 @layer components {
+  /* Dark theme fixes for UI elements */
+  .dark-card {
+    @apply bg-card text-card-foreground rounded-xl shadow-md border border-border;
+  }
+  
+  .dark-header {
+    @apply bg-background/95 backdrop-blur-sm border-b border-border text-foreground;
+  }
+  
+  .dark-input {
+    @apply bg-background border-input text-foreground;
+  }
+  
+  .dark-sidebar {
+    @apply bg-card border-r border-border;
+  }
+  
+  .dark-dropdown {
+    @apply bg-popover text-popover-foreground;
+  }
+  
   .snap-card {
     @apply bg-card rounded-xl shadow-md;
   }

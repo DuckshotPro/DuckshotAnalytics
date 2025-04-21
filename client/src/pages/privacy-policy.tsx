@@ -1,217 +1,214 @@
-/**
- * Privacy Policy Page
- * 
- * This page outlines the privacy policy for DuckShots SnapAlytics,
- * explaining what data is collected, how it's used, and user rights.
- */
-
-import React from "react";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="container mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
-      <p className="text-muted-foreground mb-8">
-        Last updated: April 18, 2025
-      </p>
+    <div className="container max-w-4xl py-10 space-y-6">
+      <h1 className="text-3xl font-bold purple-gradient-text">Privacy Policy</h1>
+      <p className="text-muted-foreground">Last updated: April 21, 2025</p>
 
-      <Card className="mb-8">
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Introduction</CardTitle>
-          <CardDescription>
-            Our commitment to your privacy
-          </CardDescription>
+          <CardTitle>1. Introduction</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="mb-4">
-            DuckShots SnapAlytics ("we", "our", or "us") respects your privacy and is committed to protecting your personal data. 
-            This privacy policy will inform you about how we look after your personal data when you use our application and tell you about your privacy rights.
+        <CardContent className="space-y-4">
+          <p>
+            DuckShot Analytics ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our web application.
           </p>
           <p>
-            By using our services, you consent to the collection and use of information in accordance with this policy.
+            Please read this Privacy Policy carefully. By accessing or using our service, you acknowledge that you have read, understood, and agree to be bound by all the terms of this Privacy Policy.
           </p>
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Data We Collect</CardTitle>
-          <CardDescription>
-            Information collected through our application
-          </CardDescription>
+          <CardTitle>2. Information We Collect</CardTitle>
         </CardHeader>
-        <CardContent>
-          <h3 className="text-lg font-medium mb-2">Account Information</h3>
-          <p className="mb-4">
-            When you register for an account, we collect your username and a securely hashed version of your password.
-            If you choose to log in via Snapchat, we collect your Snapchat OAuth credentials, which include an access token
-            and refresh token.
-          </p>
-
-          <h3 className="text-lg font-medium mb-2">Snapchat Analytics Data</h3>
-          <p className="mb-4">
-            With your explicit permission, we collect analytics data from your Snapchat account using the credentials you provide.
-            This may include follower counts, engagement metrics, view statistics, and demographic information.
-            This data is stored in our database and associated with your account.
-          </p>
-
-          <h3 className="text-lg font-medium mb-2">Subscription Information</h3>
+        <CardContent className="space-y-4">
+          <h3 className="font-medium">2.1 Personal Information</h3>
           <p>
-            If you subscribe to our premium service, we collect and store information about your subscription status,
-            including the subscription tier and expiration date.
+            We may collect personally identifiable information, such as:
           </p>
-        </CardContent>
-      </Card>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Name and username</li>
+            <li>Email address</li>
+            <li>Payment information (processed securely through Stripe)</li>
+            <li>Snapchat account information (with your explicit consent)</li>
+            <li>Profile information</li>
+          </ul>
 
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>How We Use Your Data</CardTitle>
-          <CardDescription>
-            Purposes for which we use your personal data
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>
-              <strong>Provide our services:</strong> We use your data to provide you with our analytics services, including processing and displaying your Snapchat analytics data.
-            </li>
-            <li>
-              <strong>Improve our services:</strong> We analyze usage patterns to improve the functionality and user experience of our application.
-            </li>
-            <li>
-              <strong>Generate insights:</strong> For premium subscribers, we use your Snapchat analytics data to generate AI-powered insights about your account performance.
-            </li>
-            <li>
-              <strong>Communicate with you:</strong> We may use your contact information to send you service-related notices and updates.
-            </li>
+          <h3 className="font-medium mt-4">2.2 Snapchat Data</h3>
+          <p>
+            With your authorization, we connect to the Snapchat API to retrieve analytics data related to your content, including but not limited to:
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Audience demographics</li>
+            <li>Content performance metrics</li>
+            <li>Engagement statistics</li>
+            <li>Geographic information</li>
+          </ul>
+
+          <h3 className="font-medium mt-4">2.3 Usage Information</h3>
+          <p>
+            We automatically collect certain information about your device and how you interact with our service, including:
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>IP address</li>
+            <li>Browser type</li>
+            <li>Device information</li>
+            <li>Pages viewed and features used</li>
+            <li>Time spent on the platform</li>
           </ul>
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Data Security</CardTitle>
-          <CardDescription>
-            How we protect your personal data
-          </CardDescription>
+          <CardTitle>3. How We Use Your Information</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="mb-4">
-            We implement appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way.
-            These measures include:
+        <CardContent className="space-y-4">
+          <p>
+            We use the information we collect for various purposes, including:
           </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Password hashing using secure cryptographic methods</li>
-            <li>Encrypted storage of OAuth tokens</li>
-            <li>Secure HTTPS connections for all data transfers</li>
-            <li>Regular security audits and updates</li>
-            <li>Limited access to personal data by authorized personnel only</li>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Providing, operating, and maintaining our service</li>
+            <li>Improving and personalizing your experience</li>
+            <li>Analyzing usage patterns and trends</li>
+            <li>Communicating with you about your account or transactions</li>
+            <li>Sending you technical notices and updates</li>
+            <li>Processing payments and managing subscriptions</li>
+            <li>Protecting against fraudulent or unauthorized activity</li>
           </ul>
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Your Data Rights</CardTitle>
-          <CardDescription>
-            Control over your personal data
-          </CardDescription>
+          <CardTitle>4. Data Sharing and Disclosure</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="mb-4">
-            You have the right to:
+        <CardContent className="space-y-4">
+          <p>
+            We may share your information in the following circumstances:
           </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Access the personal data we hold about you</li>
-            <li>Request correction of your personal data</li>
-            <li>Request deletion of your data</li>
-            <li>Withdraw your consent at any time (for data processing based on consent)</li>
-            <li>Request restriction of processing of your personal data</li>
-            <li>Request the transfer of your personal data</li>
-            <li>Object to processing of your personal data</li>
+          <ul className="list-disc pl-6 space-y-2">
+            <li><strong>Service Providers:</strong> We may share your information with third-party vendors who provide services on our behalf, such as payment processing and data analytics.</li>
+            <li><strong>Legal Requirements:</strong> We may disclose your information if required to do so by law or in response to valid requests by public authorities.</li>
+            <li><strong>Business Transfers:</strong> If we are involved in a merger, acquisition, or sale of all or a portion of our assets, your information may be transferred as part of that transaction.</li>
+            <li><strong>With Your Consent:</strong> We may share your information with third parties when we have your explicit consent to do so.</li>
           </ul>
           <p className="mt-4">
-            To exercise any of these rights, please contact us at privacy@duckshotsanalytics.com
+            We will never sell your personal information to third parties for marketing purposes.
           </p>
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Data Retention</CardTitle>
-          <CardDescription>
-            How long we keep your data
-          </CardDescription>
+          <CardTitle>5. Data Security</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p>
-            We will retain your personal data for as long as necessary to fulfill the purposes we collected it for,
-            including for the purposes of satisfying any legal, accounting, or reporting requirements.
-            If you delete your account, your personal data will be deleted or anonymized within 30 days.
+            We implement appropriate technical and organizational measures to protect the security of your personal information. However, please be aware that no method of transmission over the Internet or method of electronic storage is 100% secure.
+          </p>
+          <p>
+            We limit access to your information to authorized personnel and contractors who need to know that information in order to operate, develop, or improve our service. These individuals are bound by confidentiality obligations.
           </p>
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Third-Party Sharing</CardTitle>
-          <CardDescription>
-            How and when we share your data
-          </CardDescription>
+          <CardTitle>6. Your Data Rights and Choices</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="mb-4">
-            We do not sell or rent your personal data to third parties. We may share your data with:
+        <CardContent className="space-y-4">
+          <p>
+            Depending on your location, you may have certain rights regarding your personal information, including:
           </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>
-              <strong>Snapchat:</strong> To retrieve your analytics data, we interact with Snapchat's API using the credentials you provide.
-            </li>
-            <li>
-              <strong>AI Service Providers:</strong> For premium subscribers, we may use third-party AI services to generate insights from your analytics data.
-            </li>
-            <li>
-              <strong>Payment Processors:</strong> If you subscribe to our premium service, your payment information will be processed by secure third-party payment processors.
-            </li>
-            <li>
-              <strong>Legal Requirements:</strong> We may disclose your information if required to do so by law or in response to valid requests by public authorities.
-            </li>
+          <ul className="list-disc pl-6 space-y-2">
+            <li><strong>Access:</strong> You can request a copy of the personal information we hold about you.</li>
+            <li><strong>Correction:</strong> You can request that we correct inaccurate or incomplete information.</li>
+            <li><strong>Deletion:</strong> You can request that we delete your personal information.</li>
+            <li><strong>Restriction:</strong> You can request that we restrict the processing of your information.</li>
+            <li><strong>Portability:</strong> You can request a machine-readable copy of your information.</li>
+            <li><strong>Objection:</strong> You can object to certain types of processing.</li>
+          </ul>
+          <p className="mt-4">
+            To exercise these rights, please contact us at privacy@duckshotanalytics.com. We will respond to your request within a reasonable timeframe.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="dark-card">
+        <CardHeader>
+          <CardTitle>7. User Consent Management</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p>
+            We provide granular consent controls that allow you to specify exactly how your data may be used. You can adjust these settings at any time from your account's data management page.
+          </p>
+          <p>
+            Our consent management system allows you to control:
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Analytics data collection and processing</li>
+            <li>Demographic data usage</li>
+            <li>Location data processing</li>
+            <li>Content analysis</li>
+            <li>Third-party data sharing</li>
+            <li>Marketing communications</li>
           </ul>
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Changes to This Policy</CardTitle>
-          <CardDescription>
-            How we update our privacy policy
-          </CardDescription>
+          <CardTitle>8. Data Retention</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p>
-            We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page
-            and updating the "Last updated" date at the top of this page. You are advised to review this Privacy Policy periodically for any changes.
+            We retain your personal information for as long as necessary to provide the services you have requested, or for other essential purposes such as complying with our legal obligations, resolving disputes, and enforcing our agreements.
+          </p>
+          <p>
+            You can request the deletion of your account and associated data at any time. We will process such requests within 30 days, subject to any legal requirements to retain certain information.
           </p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Contact Us</CardTitle>
-          <CardDescription>
-            How to reach us with questions about privacy
-          </CardDescription>
+          <CardTitle>9. International Data Transfers</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p>
-            If you have any questions about this Privacy Policy, please contact us at privacy@duckshotsanalytics.com
+            Your information may be transferred to and processed in countries other than the country in which you reside. These countries may have data protection laws that are different from the laws of your country.
+          </p>
+          <p>
+            Whenever we transfer your information, we take appropriate safeguards to ensure that your information remains protected in accordance with this Privacy Policy.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="dark-card">
+        <CardHeader>
+          <CardTitle>10. Changes to This Privacy Policy</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p>
+            We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date at the top.
+          </p>
+          <p>
+            You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="dark-card">
+        <CardHeader>
+          <CardTitle>11. Contact Us</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p>
+            If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at privacy@duckshotanalytics.com.
           </p>
         </CardContent>
       </Card>
