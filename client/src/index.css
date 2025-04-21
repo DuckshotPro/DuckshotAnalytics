@@ -4,33 +4,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 224 71.4% 4.1%;
+    --background: 240 10% 10%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card: 240 10% 15%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --popover: 240 10% 15%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 325 90% 66%;
+    --primary: 270 90% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 330 100% 96%;
-    --secondary-foreground: 335 78% 60%;
+    --secondary: 240 30% 20%;
+    --secondary-foreground: 270 70% 80%;
 
-    --muted: 326 15% 92%;
-    --muted-foreground: 325 10% 40%;
+    --muted: 240 10% 20%;
+    --muted-foreground: 240 5% 65%;
 
-    --accent: 325 85% 90%;
-    --accent-foreground: 325 78% 40%;
+    --accent: 325 85% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 100% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 325 10% 86%;
-    --input: 325 10% 86%;
-    --ring: 325 90% 66%;
+    --border: 240 10% 20%;
+    --input: 240 10% 20%;
+    --ring: 270 90% 60%;
 
     --radius: 0.6rem;
   }
@@ -41,43 +41,67 @@
 
   body {
     @apply font-sans antialiased text-foreground;
-    background: linear-gradient(135deg, #fcf5ff 0%, #f9f0ff 100%);
+    background: linear-gradient(135deg, #1a1625 0%, #0f0c16 100%);
   }
 }
 
 @layer components {
   .snap-card {
-    @apply bg-white rounded-xl shadow-md;
+    @apply bg-card rounded-xl shadow-md;
   }
 
   .premium-badge {
     @apply absolute top-2 right-2 px-2 py-0.5 rounded-md text-xs font-semibold text-white;
-    background: linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
+    background: linear-gradient(135deg, #b866ff 0%, #ff33cc 100%);
   }
 
   .float-animation {
     animation: float 3s ease-in-out infinite;
   }
 
-  .pink-gradient-bg {
-    background: linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
+  .purple-pink-gradient-bg {
+    background: linear-gradient(135deg, #9a45ff 0%, #ff45d9 100%);
   }
 
-  .pink-gradient-text {
-    background: linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
+  .purple-gradient-bg {
+    background: linear-gradient(135deg, #7a2bff 0%, #b06aff 100%);
+  }
+
+  .pink-accent-bg {
+    background: linear-gradient(135deg, #ff45d9 0%, #ff6ddd 100%);
+  }
+
+  .purple-pink-gradient-text {
+    background: linear-gradient(135deg, #9a45ff 0%, #ff45d9 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  .pink-gradient-border {
+  .purple-gradient-text {
+    background: linear-gradient(135deg, #7a2bff 0%, #b06aff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .pink-gradient-text {
+    background: linear-gradient(135deg, #ff45d9 0%, #ff6ddd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .purple-pink-gradient-border {
     border: 2px solid transparent;
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
-    background-image: linear-gradient(to right, white, white), linear-gradient(135deg, #ff67e5 0%, #ff3396 100%);
+    background-image: linear-gradient(to right, var(--card), var(--card)), linear-gradient(135deg, #9a45ff 0%, #ff45d9 100%);
+  }
+
+  .purple-glow {
+    box-shadow: 0 0 15px rgba(154, 69, 255, 0.5);
   }
 
   .pink-glow {
-    box-shadow: 0 0 15px rgba(255, 103, 229, 0.5);
+    box-shadow: 0 0 15px rgba(255, 69, 217, 0.5);
   }
 
   @keyframes float {
