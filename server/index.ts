@@ -8,6 +8,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import logger, { requestLogger } from "./logger";
 
 /**
  * Initialize Express Application
@@ -24,41 +25,12 @@ app.use(express.urlencoded({ extended: false }));  // Parse URL-encoded request 
  * This middleware logs API requests with their duration and response data.
  * It helps with debugging and monitoring API performance.
  */
-app.use((req, res, next) => {
-  // Record the start time of the request processing
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+app.use(requestLogger);
 
-  // Override the res.json method to capture the response body
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  // When the response is finished, log request details
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    // Only log API requests (paths starting with /api)
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      
-      // Include response body in the log if available
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      // Truncate very long log lines
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
-  });
-
-  next();
+// Log application startup
+logger.info("Application starting up", { 
+  environment: app.get("env"), 
+  nodeVersion: process.version 
 });
 
 /**
@@ -82,16 +54,23 @@ app.use((req, res, next) => {
    * This middleware catches any errors that weren't handled in route handlers.
    * It formats the error as JSON and sends an appropriate HTTP status code.
    */
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     // Get status code from the error or default to 500
     const status = err.status || err.statusCode || 500;
     // Get error message or use a generic message
     const message = err.message || "Internal Server Error";
 
+    // Log the error
+    logger.error(`Error processing request: ${message}`, {
+      status,
+      path: req.path,
+      method: req.method,
+      stack: err.stack,
+      userId: req.user ? (req.user as any).id : undefined
+    });
+
     // Send the error response
     res.status(status).json({ message });
-    // Re-throw the error for logging
-    throw err;
   });
 
   /**
@@ -121,6 +100,7 @@ app.use((req, res, next) => {
     host: "0.0.0.0",  // Bind to all network interfaces
     reusePort: true,  // Allow multiple instances to bind to the same port (useful for clustering)
   }, () => {
+    logger.info(`Server started successfully`, { port, host: "0.0.0.0" });
     log(`serving on port ${port}`);
   });
 })();

@@ -1,8 +1,8 @@
-# DuckShots SnapAlytics
+# DuckShot Analytics
 
-A powerful Snapchat analytics dashboard that provides intelligent insights through data integration and AI-powered analysis.
+A powerful Snapchat analytics dashboard that transforms complex social media data into intuitive, engaging insights through advanced AI-powered analysis and user-friendly interfaces.
 
-![DuckShots SnapAlytics](./public/assets/logo.png)
+![DuckShot Analytics](./public/assets/logo.png)
 
 ## 🚀 Features
 

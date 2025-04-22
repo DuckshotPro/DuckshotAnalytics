@@ -124,7 +124,7 @@ export function requestLogger(req: any, res: any, next: Function) {
   // Capture response finish event
   res.on('finish', () => {
     const duration = Date.now() - startTime;
-    const logContext = {
+    const logContext: Record<string, any> = {
       method: req.method,
       url: req.originalUrl || req.url,
       ip: req.ip || req.connection.remoteAddress,
