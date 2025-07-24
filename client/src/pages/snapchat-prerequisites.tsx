@@ -12,7 +12,7 @@ export default function SnapchatPrerequisites() {
     {
       title: "Snapchat Developer Account",
       description: "You must have a Snapchat Developer account to access the API credentials",
-      status: "required",
+      status: "completed",
       steps: [
         "Visit developers.snapchat.com",
         "Sign up with your Snapchat account",
@@ -25,7 +25,7 @@ export default function SnapchatPrerequisites() {
     {
       title: "Create a Snapchat App",
       description: "Create an application in the Snapchat Developer Console to get your API credentials",
-      status: "required",
+      status: "completed",
       steps: [
         "Log into the Snapchat Developer Console",
         "Click 'Create App' or 'New App'",
@@ -39,7 +39,7 @@ export default function SnapchatPrerequisites() {
     {
       title: "API Credentials",
       description: "Obtain your Client ID and Client Secret from your Snapchat app",
-      status: "required",
+      status: "completed",
       steps: [
         "Navigate to your app in the Developer Console",
         "Go to the 'App Details' or 'Credentials' section",
@@ -158,7 +158,11 @@ export default function SnapchatPrerequisites() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={prereq.status === "required" ? "destructive" : "secondary"}>
+                      <Badge variant={
+                        prereq.status === "required" ? "destructive" : 
+                        prereq.status === "completed" ? "default" : 
+                        "secondary"
+                      }>
                         {prereq.status}
                       </Badge>
                       {prereq.estimatedTime && (
@@ -233,8 +237,17 @@ export default function SnapchatPrerequisites() {
                       <ul className="space-y-2">
                         {req.items.map((item, itemIndex) => (
                           <li key={itemIndex} className="flex items-start gap-2 text-sm">
-                            <div className="w-4 h-4 border border-muted-foreground rounded mt-0.5 flex-shrink-0" />
-                            <span>{item}</span>
+                            <input 
+                              type="checkbox" 
+                              className="w-4 h-4 mt-0.5 flex-shrink-0 rounded" 
+                              id={`${req.title.replace(/\s+/g, '-')}-${itemIndex}`}
+                            />
+                            <label 
+                              htmlFor={`${req.title.replace(/\s+/g, '-')}-${itemIndex}`}
+                              className="cursor-pointer"
+                            >
+                              {item}
+                            </label>
                           </li>
                         ))}
                       </ul>
