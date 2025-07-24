@@ -59,11 +59,11 @@ const features: Feature[] = [
     id: 2,
     title: "Advanced Audience Segmentation",
     description: "Segment your audience by demographics, behavior, content preferences, and engagement levels for more targeted analysis.",
-    status: "planned",
+    status: "completed",
     category: "Analytics",
     votes: 382,
     comments: 65,
-    estimatedCompletion: "Q3 2025",
+    completedDate: "July 2025",
     isPremium: true
   },
   {
@@ -85,7 +85,7 @@ const features: Feature[] = [
     category: "Data Management",
     votes: 275,
     comments: 41,
-    estimatedCompletion: "Q2 2025",
+    estimatedCompletion: "Q3 2025",
     isPremium: false
   },
   {
@@ -103,11 +103,11 @@ const features: Feature[] = [
     id: 6,
     title: "Enhanced Data Visualization",
     description: "More advanced chart types and interactive visualization options for better data analysis.",
-    status: "in-progress",
+    status: "completed",
     category: "User Interface",
     votes: 347,
     comments: 58,
-    estimatedCompletion: "Q3 2025",
+    completedDate: "July 2025",
     isPremium: false
   },
   {
@@ -124,11 +124,11 @@ const features: Feature[] = [
     id: 8,
     title: "Automated Insights Reports",
     description: "Scheduled email reports with key insights and performance metrics delivered to your inbox.",
-    status: "planned",
+    status: "completed",
     category: "Automation",
     votes: 327,
     comments: 39,
-    estimatedCompletion: "Q2 2025",
+    completedDate: "July 2025",
     isPremium: false
   },
   {
@@ -167,11 +167,11 @@ const features: Feature[] = [
     id: 12,
     title: "Performance Benchmarks",
     description: "Industry and category benchmarks to help you gauge your performance against standards.",
-    status: "in-progress",
+    status: "completed",
     category: "Analytics",
     votes: 287,
     comments: 45,
-    estimatedCompletion: "Q3 2025",
+    completedDate: "July 2025",
     isPremium: true
   }
 ];
