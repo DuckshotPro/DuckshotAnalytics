@@ -118,7 +118,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists" });
       }
-      
+
       // Hash the password before storing it
       const hashedPassword = await hashPassword(req.body.password);
       const userData = {
@@ -186,14 +186,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = req.user as User;
-      
+
       // Prepare consent data
       const consentData = {
         dataConsent: req.body.dataConsent === true,
         consentDate: req.body.consentDate,
         privacyPolicyVersion: req.body.privacyPolicyVersion || "1.0"
       };
-      
+
       // Update user with API credentials and consent data
       await storage.updateUserSnapchatCredentials(
         user.id, 
@@ -201,7 +201,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         req.body.snapchatApiKey,
         consentData
       );
-      
+
       // Log the consent action
       if (consentData.dataConsent) {
         await logConsent(
@@ -236,11 +236,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const user = req.user as User;
       const data = await storage.getLatestSnapchatData(user.id);
-      
+
       if (!data) {
         return res.status(404).json({ message: "No Snapchat data found" });
       }
-      
+
       res.json(data.data);
     } catch (error) {
       res.status(500).json({ message: "Error fetching Snapchat data" });
@@ -250,14 +250,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/snapchat/refresh", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-      
+
       if (!user.snapchatClientId || !user.snapchatApiKey) {
         return res.status(400).json({ message: "Snapchat credentials not found" });
       }
-      
+
       const snapchatData = await fetchSnapchatData(user.snapchatClientId, user.snapchatApiKey);
       await storage.saveSnapchatData(user.id, snapchatData);
-      
+
       res.json({ message: "Snapchat data refreshed successfully" });
     } catch (error) {
       res.status(500).json({ message: "Error refreshing Snapchat data" });
@@ -282,17 +282,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const user = req.user as User;
       const { plan } = req.body;
-      
+
       if (plan !== "premium") {
         return res.status(400).json({ message: "Invalid subscription plan" });
       }
-      
+
       // Set expiration to 30 days from now
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 30);
-      
+
       await storage.updateUserSubscription(user.id, "premium", expiresAt);
-      
+
       res.json({ message: "Subscription upgraded successfully" });
     } catch (error) {
       res.status(500).json({ message: "Error upgrading subscription" });
@@ -313,18 +313,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/insights/latest", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-      
+
       // Check if user is premium
       if (user.subscription !== "premium") {
         return res.status(403).json({ message: "Premium subscription required" });
       }
-      
+
       const insight = await storage.getLatestAiInsight(user.id);
-      
+
       if (!insight) {
         return res.status(404).json({ message: "No insights found" });
       }
-      
+
       res.json(insight);
     } catch (error) {
       res.status(500).json({ message: "Error fetching AI insight" });
@@ -334,25 +334,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/insights/generate", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-      
+
       // Check if user is premium
       if (user.subscription !== "premium") {
         return res.status(403).json({ message: "Premium subscription required" });
       }
-      
+
       // Get the latest Snapchat data
       const snapchatData = await storage.getLatestSnapchatData(user.id);
-      
+
       if (!snapchatData) {
         return res.status(404).json({ message: "No Snapchat data found to analyze" });
       }
-      
+
       // Generate AI insight
       const insightText = await generateAiInsight(snapchatData.data);
-      
+
       // Save the insight
       const insight = await storage.saveAiInsight(user.id, insightText);
-      
+
       res.json(insight);
     } catch (error) {
       res.status(500).json({ message: "Error generating AI insight" });
@@ -364,10 +364,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const user = req.user as User;
       const preferences = req.body;
-      
+
       // Validate the preferences using the userDataPreferencesSchema
       const validatedPrefs = userDataPreferencesSchema.parse(preferences);
-      
+
       // Update user data preferences in the database
       await db
         .update(users)
@@ -381,7 +381,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           updatedAt: new Date()
         })
         .where(eq(users.id, user.id));
-      
+
       // Log the preferences update as a consent action
       await logConsent(
         user.id,
@@ -390,7 +390,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "1.0",
         req
       );
-      
+
       res.json({ 
         message: "Data preferences updated successfully",
         preferences: validatedPrefs
@@ -400,17 +400,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error updating data preferences" });
     }
   });
-  
+
   // Handle user consent submissions
   app.post("/api/user/consent", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
       const { consent, preferences, timestamp } = req.body;
-      
+
       if (consent === undefined) {
         return res.status(400).json({ message: "Consent value is required" });
       }
-      
+
       // Update user consent status in the database
       await db
         .update(users)
@@ -429,7 +429,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           updatedAt: new Date()
         })
         .where(eq(users.id, user.id));
-      
+
       // Log the consent action
       await logConsent(
         user.id,
@@ -438,7 +438,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "1.0",
         req
       );
-      
+
       res.json({ 
         message: `Consent preferences ${consent ? "accepted" : "declined"} successfully`,
         consentStatus: consent
@@ -452,12 +452,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/user/export-data", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-      
+
       // Fetch all user data
       const userData = await storage.getUser(user.id);
       const snapchatData = await storage.getLatestSnapchatData(user.id);
       const insights = await storage.getLatestAiInsight(user.id);
-      
+
       // Create a comprehensive data export (exclude sensitive fields)
       const exportData = {
         user: {
@@ -485,7 +485,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         exportDate: new Date(),
         exportRequestIp: req.ip || req.headers['x-forwarded-for']
       };
-      
+
       // Log the data export for GDPR compliance
       await logConsent(
         user.id,
@@ -494,7 +494,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "1.0",
         req
       );
-      
+
       // Send as a downloadable JSON file
       res.setHeader('Content-Type', 'application/json');
       res.setHeader('Content-Disposition', `attachment; filename="duckshotsanalytics-export-${Date.now()}.json"`);
@@ -508,7 +508,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/user/delete-account", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-      
+
       // Log deletion request before deleting data for audit trail
       await logConsent(
         user.id,
@@ -517,12 +517,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "1.0",
         req
       );
-      
+
       // In a real implementation, you would:
       // 1. Delete all user data from all tables
       // 2. Either hard-delete or soft-delete (mark as deleted) the user
       // 3. Clean up any connected services or subscriptions
-      
+
       // For this prototype, we'll just log out the user
       req.logout((err) => {
         if (err) {
