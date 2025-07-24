@@ -62,6 +62,70 @@ export default function SnapchatPrerequisites() {
     }
   ];
 
+  const submissionRequirements = [
+    {
+      title: "App Store Listing Information",
+      description: "Complete app metadata required for Snapchat review",
+      status: "required",
+      items: [
+        "App name and description",
+        "App icon (1024x1024px minimum)",
+        "Screenshots of your app in action",
+        "Privacy policy URL",
+        "Terms of service URL",
+        "Support/contact information"
+      ]
+    },
+    {
+      title: "Technical Implementation",
+      description: "Your app must properly implement Snapchat's requirements",
+      status: "required",
+      items: [
+        "Proper OAuth 2.0 implementation",
+        "Correct API endpoint usage",
+        "Error handling for API responses",
+        "Rate limiting compliance",
+        "Data encryption and security measures"
+      ]
+    },
+    {
+      title: "User Experience Requirements",
+      description: "Snapchat has specific UX requirements for partner apps",
+      status: "required",
+      items: [
+        "Clear explanation of data usage to users",
+        "Proper consent flow implementation",
+        "User data deletion/export capabilities",
+        "Snapchat branding guidelines compliance",
+        "No misleading or deceptive practices"
+      ]
+    },
+    {
+      title: "Legal & Compliance",
+      description: "Legal documents and compliance requirements",
+      status: "required",
+      items: [
+        "Privacy policy covering Snapchat data usage",
+        "Terms of service agreement",
+        "COPPA compliance (if applicable)",
+        "GDPR compliance (if applicable)",
+        "Age verification mechanisms"
+      ]
+    },
+    {
+      title: "Testing & Quality Assurance",
+      description: "Thorough testing before submission",
+      status: "required",
+      items: [
+        "Test with multiple Snapchat accounts",
+        "Verify all API endpoints work correctly",
+        "Test error scenarios and edge cases",
+        "Performance testing under load",
+        "Cross-platform compatibility testing"
+      ]
+    }
+  ];
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -131,6 +195,56 @@ export default function SnapchatPrerequisites() {
             ))}
           </div>
 
+          {/* Submission Requirements Section */}
+          <div className="mt-12">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                Submission Requirements
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Before submitting your app to Snapchat for review, ensure you meet all these requirements.
+              </p>
+            </div>
+
+            <div className="grid gap-6 mb-8">
+              {submissionRequirements.map((req, index) => (
+                <Card key={index} className="dark-card">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white text-sm font-semibold">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl">{req.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {req.description}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge variant="destructive">
+                        {req.status}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm text-foreground">Checklist:</h4>
+                      <ul className="space-y-2">
+                        {req.items.map((item, itemIndex) => (
+                          <li key={itemIndex} className="flex items-start gap-2 text-sm">
+                            <div className="w-4 h-4 border border-muted-foreground rounded mt-0.5 flex-shrink-0" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
           <Card className="dark-card border-yellow-500/20 bg-yellow-500/5">
             <CardContent className="p-6">
               <div className="flex items-start gap-3">
@@ -142,7 +256,28 @@ export default function SnapchatPrerequisites() {
                     <li>• Snapchat may require app review for certain permissions</li>
                     <li>• API rate limits apply - check Snapchat's documentation for details</li>
                     <li>• Your app must comply with Snapchat's API Terms of Service</li>
+                    <li>• Review process typically takes 2-4 weeks</li>
+                    <li>• Ensure your app is fully functional before submission</li>
                   </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="dark-card border-blue-500/20 bg-blue-500/5 mt-6">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">Submission Process</h3>
+                  <ol className="space-y-1 text-sm text-muted-foreground list-decimal list-inside">
+                    <li>Complete all development prerequisites above</li>
+                    <li>Fulfill all submission requirements</li>
+                    <li>Test your app thoroughly</li>
+                    <li>Submit via the Snapchat Developer Console</li>
+                    <li>Wait for Snapchat's review and approval</li>
+                    <li>Address any feedback if required</li>
+                  </ol>
                 </div>
               </div>
             </CardContent>
