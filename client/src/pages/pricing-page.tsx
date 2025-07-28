@@ -577,7 +577,6 @@ export default function PricingPage() {
                 Get Started
               </Button>
             </Link>
-            </Link>
           )}
         </div>
       </div>
