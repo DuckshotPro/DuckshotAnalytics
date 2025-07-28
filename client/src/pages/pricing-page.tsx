@@ -570,9 +570,10 @@ export default function PricingPage() {
             )
           ) : (
             <Link href="/auth">
+              <Link to="/auth">
               <Button 
                 size="lg"
-                className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white"
+                className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white cursor-pointer"
               >
                 Get Started
               </Button>
