@@ -28,9 +28,13 @@ export function Logo({ size = "medium", withText = true, className }: LogoProps)
           strokeLinejoin="round"
           className="text-white"
         >
-          <path d="M8 13s4-4 6-2c0 0 0 3 2 3s4-2 4-2" />
-          <path d="M5.9 17.2C4 16.2 2 15.3 2 14c0-1.8 3-8 3-8s.5 6 2 8" />
-          <path d="M18 10.4c1.9 1 3.9 1.9 3.9 3.2 0 1.8-3 8-3 8s-.5-6-2-8" />
+          {/* Duck silhouette with analytics elements */}
+          <path d="M8 5c-2 0-4 2-4 4v2c0 2 2 4 4 4h1c0 1 1 2 2 2h2c1 0 2-1 2-2h1c2 0 4-2 4-4V9c0-2-2-4-4-4" fill="currentColor" stroke="none" />
+          <circle cx="14" cy="8" r="1" fill="white" />
+          <path d="M7 9h2v6H7z" fill="white" opacity="0.7" />
+          <path d="M11 11h2v4h-2z" fill="white" opacity="0.7" />
+          <path d="M15 8h2v7h-2z" fill="white" opacity="0.7" />
+          <path d="M16 6l2-2m0 0l2 2m-2-2v4" stroke="white" strokeWidth="1" fill="none" />
         </svg>
       </div>
       {withText && (
