@@ -56,6 +56,94 @@ const features: Feature[] = [
     isPremium: true
   },
   {
+    id: 21,
+    title: "Redis Queue Management",
+    description: "Upgrade to Redis-based queue system for production-grade job processing and scalability.",
+    status: "planned",
+    category: "Production Readiness",
+    votes: 125,
+    comments: 18,
+    estimatedCompletion: "Q1 2025",
+    isPremium: false
+  },
+  {
+    id: 22,
+    title: "Email Integration for Reports",
+    description: "Add email service integration for automated weekly report delivery to premium users.",
+    status: "planned",
+    category: "Enhancement",
+    votes: 203,
+    comments: 35,
+    estimatedCompletion: "Q1 2025",
+    isPremium: true
+  },
+  {
+    id: 23,
+    title: "Real-time ETL Dashboard",
+    description: "Create admin dashboard to monitor ETL jobs, queue status, and system health in real-time.",
+    status: "planned",
+    category: "Monitoring",
+    votes: 89,
+    comments: 12,
+    estimatedCompletion: "Q2 2025",
+    isPremium: true
+  },
+  {
+    id: 24,
+    title: "Advanced Job Scheduling",
+    description: "Add custom scheduling capabilities for different user segments and data sync preferences.",
+    status: "planned",
+    category: "Enhancement",
+    votes: 156,
+    comments: 24,
+    estimatedCompletion: "Q2 2025",
+    isPremium: true
+  },
+  {
+    id: 25,
+    title: "Multi-format Data Export",
+    description: "Enhance export capabilities with CSV, PDF, Excel, and JSON format support for all analytics data.",
+    status: "planned",
+    category: "Enhancement",
+    votes: 234,
+    comments: 41,
+    estimatedCompletion: "Q1 2025",
+    isPremium: false
+  },
+  {
+    id: 26,
+    title: "Webhook Notifications",
+    description: "Add webhook support for real-time notifications when jobs complete or system events occur.",
+    status: "planned",
+    category: "Integration",
+    votes: 97,
+    comments: 15,
+    estimatedCompletion: "Q2 2025",
+    isPremium: true
+  },
+  {
+    id: 27,
+    title: "Third-party Analytics Integration",
+    description: "Connect with Google Analytics, Facebook Insights, and other platforms for unified reporting.",
+    status: "considering",
+    category: "Integration",
+    votes: 178,
+    comments: 29,
+    estimatedCompletion: "Q3 2025",
+    isPremium: true
+  },
+  {
+    id: 28,
+    title: "Performance Optimization",
+    description: "Analyze and optimize data processing speed with parallel processing and caching improvements.",
+    status: "planned",
+    category: "Performance",
+    votes: 143,
+    comments: 22,
+    estimatedCompletion: "Q1 2025",
+    isPremium: false
+  },
+  {
     id: 2,
     title: "Advanced Audience Segmentation",
     description: "Segment your audience by demographics, behavior, content preferences, and engagement levels for more targeted analysis.",

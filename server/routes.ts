@@ -30,6 +30,8 @@ import {
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { setupOAuth } from "./oauth";
+import { healthMonitor } from './services/health-monitor';
+import { productionAlerts } from './services/production-alerts';
 
 const scryptAsync = promisify(scrypt);
 
@@ -625,6 +627,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating competitor analysis:", error);
       res.status(500).json({ message: "Error generating competitor analysis" });
+    }
+  });
+
+  // Production Health Check Endpoints
+  app.get("/api/health", async (req: Request, res: Response) => {
+    try {
+      const health = await healthMonitor.getHealthStatus();
+      
+      // Return appropriate HTTP status based on health
+      const statusCode = health.status === 'healthy' ? 200 : 
+                        health.status === 'degraded' ? 200 : 503;
+      
+      res.status(statusCode).json(health);
+    } catch (error) {
+      logger.error("Health check failed:", error);
+      res.status(503).json({
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        error: 'Health check failed'
+      });
+    }
+  });
+
+  app.get("/api/health/detailed", async (req: Request, res: Response) => {
+    try {
+      const health = await healthMonitor.getHealthStatus();
+      
+      // Additional detailed metrics for internal monitoring
+      const detailedHealth = {
+        ...health,
+        system: {
+          uptime: process.uptime(),
+          memory: process.memoryUsage(),
+          nodeVersion: process.version,
+          environment: process.env.NODE_ENV || 'development'
+        }
+      };
+
+      res.json(detailedHealth);
+    } catch (error) {
+      logger.error("Detailed health check failed:", error);
+      res.status(503).json({
+        status: 'unhealthy',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Production Alert Test Endpoint (for testing alert system)
+  app.post("/api/health/test-alert", async (req: Request, res: Response) => {
+    try {
+      await productionAlerts.sendAlert({
+        type: 'system_health',
+        severity: 'medium',
+        title: 'Test Alert',
+        message: 'This is a test alert from the production monitoring system',
+        metadata: {
+          source: 'manual_test',
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      res.json({ message: 'Test alert sent successfully' });
+    } catch (error) {
+      logger.error("Failed to send test alert:", error);
+      res.status(500).json({ error: 'Failed to send test alert' });
     }
   });
 
