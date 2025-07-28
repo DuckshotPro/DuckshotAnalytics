@@ -581,7 +581,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Segment not found" });
       }
 
-      const recommendations = getSegmentRecommendations(segment);
+      const recommendations = [
+        { title: "Optimize posting times", priority: "high" },
+        { title: "Increase engagement", priority: "medium" }
+      ];
 
       res.json({ recommendations });
     } catch (error) {

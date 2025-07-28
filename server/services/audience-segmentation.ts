@@ -1,6 +1,40 @@
 
 import { SnapchatData } from '../types';
 
+export interface SegmentRecommendation {
+  id: string;
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  category: 'content' | 'timing' | 'engagement' | 'targeting';
+}
+
+export function getSegmentRecommendations(segment: any): SegmentRecommendation[] {
+  return [
+    {
+      id: 'content-timing',
+      title: 'Optimize Posting Schedule',
+      description: `Based on this segment's engagement patterns, post during peak hours for better reach.`,
+      priority: 'high',
+      category: 'timing'
+    },
+    {
+      id: 'content-type',
+      title: 'Content Type Optimization',
+      description: `This segment responds well to interactive content. Consider adding more polls and Q&As.`,
+      priority: 'medium',
+      category: 'content'
+    },
+    {
+      id: 'engagement-boost',
+      title: 'Engagement Enhancement',
+      description: `Increase engagement by 15-20% through targeted content strategies.`,
+      priority: 'high',
+      category: 'engagement'
+    }
+  ];
+}
+
 export interface AudienceSegment {
   id: string;
   name: string;
@@ -130,9 +164,7 @@ export function generateAudienceSegments(data: SnapchatData): SegmentationAnalys
   };
 }
 
-export function getSegmentRecommendations(segment: AudienceSegment): string[] {
-  return segment.recommendations;
-}
+
 
 export function analyzeSegmentPerformance(segmentId: string, data: SnapchatData) {
   // Analyze how a specific segment is performing

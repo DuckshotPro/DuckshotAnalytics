@@ -18,6 +18,9 @@ import {
   InsertOAuthToken,
   consentLogs,
   ConsentLog,
+  jobExecutionLogs,
+  JobExecutionLog,
+  InsertJobExecutionLog,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -73,6 +76,33 @@ export interface IStorage {
    * @returns The updated user object
    */
   updateUserSubscription(userId: number, subscription: string, expiresAt: Date | null): Promise<User>;
+
+  /**
+   * Retrieves all users (for batch processing)
+   * @returns Array of all user objects
+   */
+  getAllUsers(): Promise<User[]>;
+
+  /**
+   * Logs job execution for monitoring and debugging
+   * @param jobData - Job execution data
+   */
+  logJobExecution(jobData: Partial<InsertJobExecutionLog>): Promise<void>;
+
+  /**
+   * Cleans up old data based on retention policy
+   * @param userId - The user's ID
+   * @param cutoffDate - Date before which to delete data
+   * @returns Number of records cleaned
+   */
+  cleanupOldData(userId: number, cutoffDate: Date): Promise<number>;
+
+  /**
+   * Gets the latest Snapchat data for a user
+   * @param userId - The user's ID
+   * @returns Latest Snapchat data record
+   */
+  getLatestSnapchatData(userId: number): Promise<SnapchatData | undefined>;
   
   /**
    * Saves Snapchat data for a user
@@ -386,6 +416,60 @@ export class DatabaseStorage implements IStorage {
     return token;
   }
   
+  /**
+   * Gets all users (for batch processing)
+   * @returns Array of all user objects
+   */
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  /**
+   * Logs job execution for monitoring and debugging
+   * @param jobData - Job execution data
+   */
+  async logJobExecution(jobData: Partial<InsertJobExecutionLog>): Promise<void> {
+    await db.insert(jobExecutionLogs).values({
+      userId: jobData.userId || null,
+      jobType: jobData.jobType!,
+      status: jobData.status!,
+      executedAt: jobData.executedAt || new Date(),
+      completedAt: jobData.completedAt || null,
+      error: jobData.error || null,
+      metadata: jobData.metadata || null,
+      duration: jobData.duration || null,
+    });
+  }
+
+  /**
+   * Cleans up old data based on retention policy
+   * @param userId - The user's ID
+   * @param cutoffDate - Date before which to delete data
+   * @returns Number of records cleaned
+   */
+  async cleanupOldData(userId: number, cutoffDate: Date): Promise<number> {
+    // Clean up old Snapchat data
+    const deletedSnapchatData = await db.delete(snapchatData)
+      .where(
+        and(
+          eq(snapchatData.userId, userId),
+          // Use SQL comparison for date
+          db.sql`${snapchatData.fetchedAt} < ${cutoffDate}`
+        )
+      );
+
+    // Clean up old AI insights
+    const deletedInsights = await db.delete(aiInsights)
+      .where(
+        and(
+          eq(aiInsights.userId, userId),
+          db.sql`${aiInsights.createdAt} < ${cutoffDate}`
+        )
+      );
+
+    return (deletedSnapchatData as any).rowCount + (deletedInsights as any).rowCount || 0;
+  }
+
   /**
    * Gets a user by their provider ID
    * @param provider - The OAuth provider name

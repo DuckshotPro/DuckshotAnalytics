@@ -118,6 +118,27 @@ export const consentLogs = pgTable("consent_logs", {
 });
 
 /**
+ * Job Execution Logs Table
+ * 
+ * Tracks all background job executions for monitoring and debugging:
+ * - ETL pipeline jobs
+ * - Report generation jobs
+ * - Data cleanup jobs
+ * - Queue processing status
+ */
+export const jobExecutionLogs = pgTable("job_execution_logs", {
+  id: serial("id").primaryKey(),                   // Unique identifier for the job execution
+  userId: integer("user_id"),                      // Foreign key to users table (null for system-wide jobs)
+  jobType: text("job_type").notNull(),             // Type of job (data-fetch, weekly-reports, data-cleanup)
+  status: text("status").notNull(),                // Job status (completed, failed, running)
+  executedAt: timestamp("executed_at").defaultNow().notNull(), // When the job was executed
+  completedAt: timestamp("completed_at"),          // When the job completed (null if failed or running)
+  error: text("error"),                            // Error message if job failed
+  metadata: jsonb("metadata"),                     // Additional job metadata (JSON)
+  duration: integer("duration"),                   // Job duration in milliseconds
+});
+
+/**
  * User Registration Schema
  * 
  * Zod schema for validating user registration data
@@ -230,3 +251,22 @@ export const insertConsentLogSchema = createInsertSchema(consentLogs).pick({
 
 export type ConsentLog = typeof consentLogs.$inferSelect;       // Type for a consent log record
 export type InsertConsentLog = z.infer<typeof insertConsentLogSchema>; // Type for inserting a consent log
+
+/**
+ * Job Execution Log Schema
+ * 
+ * Zod schema for validating job execution log data
+ */
+export const insertJobExecutionLogSchema = createInsertSchema(jobExecutionLogs).pick({
+  userId: true,
+  jobType: true,
+  status: true,
+  executedAt: true,
+  completedAt: true,
+  error: true,
+  metadata: true,
+  duration: true,
+});
+
+export type JobExecutionLog = typeof jobExecutionLogs.$inferSelect;
+export type InsertJobExecutionLog = z.infer<typeof insertJobExecutionLogSchema>;

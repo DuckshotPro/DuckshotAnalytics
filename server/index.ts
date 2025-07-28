@@ -49,6 +49,32 @@ logger.info("Application starting up", {
   const server = await registerRoutes(app);
 
   /**
+   * Start ETL Pipeline and Job Scheduler
+   * 
+   * Initialize background job processing for data fetching,
+   * report generation, and data cleanup tasks.
+   */
+  try {
+    const { jobScheduler } = await import('./services/job-scheduler');
+    jobScheduler.start();
+    
+    // Graceful shutdown handling
+    const shutdown = () => {
+      logger.info('Shutting down server gracefully...');
+      jobScheduler.stop();
+      server.close(() => {
+        logger.info('Server closed');
+        process.exit(0);
+      });
+    };
+    
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+  } catch (error) {
+    logger.error('Failed to start job scheduler:', error);
+  }
+
+  /**
    * Global Error Handler
    * 
    * This middleware catches any errors that weren't handled in route handlers.
