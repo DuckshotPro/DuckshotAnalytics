@@ -36,9 +36,7 @@ export function setupOAuth(app: Express) {
    * Handles authentication with Snapchat and processing of OAuth tokens.
    */
   // Use a custom OAuth2 strategy for Snapchat
-  const SnapchatOAuth2Strategy = OAuth2Strategy;
-  
-  passport.use('snapchat', new SnapchatOAuth2Strategy({
+  passport.use('snapchat', new OAuth2Strategy({
     authorizationURL: 'https://accounts.snapchat.com/accounts/oauth2/auth',
     tokenURL: 'https://accounts.snapchat.com/accounts/oauth2/token',
     clientID: providers.snapchat.clientID,
@@ -144,10 +142,10 @@ export function setupOAuth(app: Express) {
   
   // OAuth callback route
   app.get("/api/auth/snapchat/callback", 
-    passport.authenticate("snapchat", { failureRedirect: "/auth" }),
+    passport.authenticate("snapchat", { failureRedirect: "/auth?error=oauth_failed" }),
     (req, res) => {
       // Successful authentication, redirect to dashboard
-      res.redirect("/dashboard");
+      res.redirect("/dashboard?connected=true");
     }
   );
   
