@@ -32,6 +32,7 @@ import { promisify } from "util";
 import { setupOAuth } from "./oauth";
 import { healthMonitor } from './services/health-monitor';
 import { productionAlerts } from './services/production-alerts';
+import logger from "./logger";
 
 const scryptAsync = promisify(scrypt);
 
@@ -552,7 +553,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Premium subscription required" });
       }
 
-      const segments = await generateAudienceSegments(user.id);
+      // Get user's Snapchat data first
+      const snapchatData = await storage.getSnapchatData(user.id);
+      if (!snapchatData) {
+        return res.status(404).json({ message: "No Snapchat data found. Please sync your account first." });
+      }
+      
+      const segments = generateAudienceSegments(snapchatData);
       res.json(segments);
     } catch (error) {
       console.error("Error fetching audience segments:", error);
