@@ -630,15 +630,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Production Health Check Endpoints
+  // Debug endpoint for environment variables (remove in production)
+  app.get("/api/debug/env", (req, res) => {
+    res.json({
+      snapchat_client_id: process.env.SNAPCHAT_CLIENT_ID ? "SET" : "NOT SET",
+      snapchat_client_secret: process.env.SNAPCHAT_CLIENT_SECRET ? "SET" : "NOT SET",
+      node_env: process.env.NODE_ENV,
+      all_env_keys: Object.keys(process.env).filter(key => key.includes('SNAPCHAT'))
+    });
+  });
+
+  // Health check endpoint for production monitoring
   app.get("/api/health", async (req: Request, res: Response) => {
     try {
       const health = await healthMonitor.getHealthStatus();
-      
+
       // Return appropriate HTTP status based on health
       const statusCode = health.status === 'healthy' ? 200 : 
                         health.status === 'degraded' ? 200 : 503;
-      
+
       res.status(statusCode).json(health);
     } catch (error) {
       logger.error("Health check failed:", error);
@@ -653,7 +663,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/health/detailed", async (req: Request, res: Response) => {
     try {
       const health = await healthMonitor.getHealthStatus();
-      
+
       // Additional detailed metrics for internal monitoring
       const detailedHealth = {
         ...health,
