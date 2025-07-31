@@ -171,18 +171,18 @@ rm -rf "$TEMP_DIR/logs" 2>/dev/null
 rm -f "$TEMP_DIR/.env" 2>/dev/null
 rm -f "$TEMP_DIR/.env.local" 2>/dev/null
 
-echo "📦 Creating zip archive..."
+echo "📦 Creating tar archive..."
 
-# Create the final zip package
-ZIP_NAME="DuckShots_Analytics_Snapchat_Submission_$(date +%Y%m%d_%H%M%S).zip"
-zip -r "$ZIP_NAME" "$TEMP_DIR/" -x "*.log" "node_modules/*" ".git/*"
+# Create the final tar package (compressed)
+TAR_NAME="DuckShots_Analytics_Snapchat_Submission_$(date +%Y%m%d_%H%M%S).tar.gz"
+tar -czf "$TAR_NAME" --exclude="*.log" --exclude="node_modules" --exclude=".git" -C . "$TEMP_DIR"
 
 # Clean up temporary directory
 rm -rf "$TEMP_DIR"
 
 echo "✅ Submission package created successfully!"
-echo "📦 Package: $ZIP_NAME"
-echo "📊 Size: $(du -h "$ZIP_NAME" | cut -f1)"
+echo "📦 Package: $TAR_NAME"
+echo "📊 Size: $(du -h "$TAR_NAME" | cut -f1)"
 echo ""
 echo "🚀 Next Steps:"
 echo "1. Download the zip file"
