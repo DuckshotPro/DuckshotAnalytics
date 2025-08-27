@@ -18,6 +18,11 @@ import SnapchatPrerequisites from "@/pages/snapchat-prerequisites";
 import Dashboard from "@/pages/Dashboard";
 import AuthPage from "@/pages/auth-page";
 import PricingPage from "@/pages/pricing-page";
+import FeaturesPage from "@/pages/features";
+import AboutPage from "@/pages/about";
+import CareersPage from "@/pages/careers";
+import BlogPage from "@/pages/blog";
+import CookiesPage from "@/pages/cookies";
 import SettingsPage from "@/pages/settings-page";
 import ReportsPage from "@/pages/reports-page";
 import HelpPage from "@/pages/help-page";
@@ -46,6 +51,12 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
         <Route path="/login" component={AuthPage} />
         <Route path="/signup" component={AuthPage} />
+        {/* Static Marketing Pages */}
+        <Route path="/features" component={FeaturesPage} />
+        <Route path="/about" component={AboutPage} />
+        <Route path="/careers" component={CareersPage} />
+        <Route path="/blog" component={BlogPage} />
+        <Route path="/cookies" component={CookiesPage} />
         <Route path="/pricing-page" component={PricingPage} />
         <Route path="/privacy-policy" component={PrivacyPolicyPage} />
         <Route path="/terms-page" component={TermsPage} />

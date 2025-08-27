@@ -19,12 +19,14 @@ export function UpgradePrompt() {
           <p className="text-indigo-100">Get advanced analytics, AI insights, and export capabilities with our premium plan.</p>
         </div>
         <div className="flex space-x-3">
-          <Link href="/pricing">
+          {/* Use the correct pricing route used elsewhere: /pricing-page */}
+          <Link href="/pricing-page">
             <Button className="bg-white text-purple-600 hover:bg-gray-100">
               See Plans
             </Button>
           </Link>
-          <Link href="/premium-features">
+          {/* Route not implemented; link to pricing page for details */}
+          <Link href="/pricing-page">
             <Button variant="outline" className="bg-transparent hover:bg-purple-700 border border-white text-white">
               Learn More
             </Button>

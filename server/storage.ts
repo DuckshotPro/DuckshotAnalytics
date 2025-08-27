@@ -103,6 +103,11 @@ export interface IStorage {
    * @returns Latest Snapchat data record
    */
   getSnapchatData(userId: number): Promise<SnapchatData | undefined>;
+  /**
+   * Compatibility helper matching existing route usage.
+   * Returns the most recent Snapchat data for a user.
+   */
+  getLatestSnapchatData(userId: number): Promise<SnapchatData | undefined>;
   
   /**
    * Saves Snapchat data for a user
@@ -354,6 +359,14 @@ export class DatabaseStorage implements IStorage {
       .limit(1);
     
     return latestData;
+  }
+
+  /**
+   * Alias to support existing callers using getLatestSnapchatData.
+   * Keeps behavior identical to getSnapchatData which already returns latest.
+   */
+  async getLatestSnapchatData(userId: number): Promise<SnapchatData | undefined> {
+    return this.getSnapchatData(userId);
   }
 
   /**

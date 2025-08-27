@@ -52,7 +52,9 @@ export function setupOAuth(app: Express) {
     callbackURL: providers.snapchat.callbackURL,
     scope: providers.snapchat.scope.join(' '),
     passReqToCallback: true,
-  }, async (req: any, accessToken: string, refreshToken: string, params: any, done: any) => {
+    // We don't fetch profile from Snapchat in this prototype, so skip it
+    skipUserProfile: true,
+  }, async (req: any, accessToken: string, refreshToken: string, params: any, profile: any, done: any) => {
     // In a real application, we would make an API call to get the user profile
     // For now, we'll create a mock profile using the token data
     const profile = {

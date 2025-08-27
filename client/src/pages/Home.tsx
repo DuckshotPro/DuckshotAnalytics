@@ -96,7 +96,8 @@ export default function Home() {
                   <span className="inline-block px-3 py-1 bg-accent text-white rounded-full text-sm font-medium mb-4">Premium Feature</span>
                   <h2 className="text-2xl md:text-3xl font-bold mb-4">AI-Powered Insights</h2>
                   <p className="text-muted-foreground mb-6">Upgrade to premium and get AI-generated insights to help you understand your data and improve your content strategy.</p>
-                  <Link href="/pricing">
+                  {/* Align with existing pricing route */}
+                  <Link href="/pricing-page">
                     <Button className="bg-accent hover:bg-accent/90 text-white">
                       See Premium Plans
                     </Button>
