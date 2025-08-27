@@ -64,7 +64,6 @@ export default function SettingsPage() {
               </Button>
             </div>
           ) : (
-            {/* Correct route to pricing page */}
             <Link href="/pricing-page">
               <Button className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white">
                 <CreditCard className="mr-2 h-4 w-4" /> 
@@ -281,7 +280,6 @@ export default function SettingsPage() {
                     Cancel Subscription
                   </Button>
                 ) : (
-                  {/* Correct route to pricing page */}
                   <Link href="/pricing-page">
                     <Button className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white">
                       Upgrade to Premium

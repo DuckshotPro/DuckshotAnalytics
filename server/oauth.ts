@@ -54,17 +54,17 @@ export function setupOAuth(app: Express) {
     passReqToCallback: true,
     // We don't fetch profile from Snapchat in this prototype, so skip it
     skipUserProfile: true,
-  }, async (req: any, accessToken: string, refreshToken: string, params: any, profile: any, done: any) => {
+  }, async (req: any, accessToken: string, refreshToken: string, params: any, done: any) => {
     // In a real application, we would make an API call to get the user profile
     // For now, we'll create a mock profile using the token data
-    const profile = {
+    const mockProfile = {
       id: `snap_${Date.now()}`, // In a real app, this should be the Snapchat user ID
       displayName: 'Snapchat User',
       provider: 'snapchat'
     };
     try {
       // Check if this is an existing user authenticating with OAuth
-      const snapchatId = profile.id;
+      const snapchatId = mockProfile.id;
       
       // If user is logged in, link their account to Snapchat
       if (req.isAuthenticated() && req.user) {
@@ -109,7 +109,7 @@ export function setupOAuth(app: Express) {
         return done(null, existingUser);
       } else {
         // Create a new user with Snapchat profile
-        const username = `snapchat_${profile.id}`;
+        const username = `snapchat_${mockProfile.id}`;
         const password = generateSecurePassword(); // Generate a random secure password
         
         const newUser = await storage.createUser({
