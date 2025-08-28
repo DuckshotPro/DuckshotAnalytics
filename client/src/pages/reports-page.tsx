@@ -236,7 +236,8 @@ export default function ReportsPage() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Upgrade to premium to access report history and scheduling
                   </p>
-                  <Link href="/pricing">
+                  {/* Correct route to pricing page */}
+                  <Link href="/pricing-page">
                     <Button variant="outline" className="w-full">Upgrade Now</Button>
                   </Link>
                 </div>
@@ -344,7 +345,8 @@ export default function ReportsPage() {
                       <p className="text-sm text-gray-500 mb-3">
                         Upgrade to premium for 3x more detailed AI-powered recommendations.
                       </p>
-                      <Link href="/pricing">
+                      {/* Correct route to pricing page */}
+                      <Link href="/pricing-page">
                         <Button variant="outline" size="sm">Upgrade to Premium</Button>
                       </Link>
                     </div>
@@ -455,7 +457,8 @@ export default function ReportsPage() {
                       <p className="text-sm text-muted-foreground mb-4 text-center max-w-xs">
                         Detailed geographic data is available with premium subscription
                       </p>
-                      <Link href="/pricing">
+                      {/* Correct route to pricing page */}
+                      <Link href="/pricing-page">
                         <Button>Upgrade to Premium</Button>
                       </Link>
                     </div>
@@ -488,7 +491,8 @@ export default function ReportsPage() {
                     <p className="text-sm text-muted-foreground mb-6 max-w-md">
                       Upgrade to premium to access advanced AI forecasting, helping you predict future growth and optimize your content strategy.
                     </p>
-                    <Link href="/pricing">
+                    {/* Correct route to pricing page */}
+                    <Link href="/pricing-page">
                       <Button>Upgrade to Premium</Button>
                     </Link>
                   </div>
@@ -568,7 +572,8 @@ export default function ReportsPage() {
                 Advanced analytics including conversion tracking, competitor analysis, 
                 and predictive audience insights are available with a Premium subscription.
               </p>
-              <Link href="/pricing">
+              {/* Correct route to pricing page */}
+              <Link href="/pricing-page">
                 <Button size="lg">Upgrade to Premium</Button>
               </Link>
             </div>

@@ -64,7 +64,7 @@ DuckShots SnapAlytics offers a range of features to help Snapchat creators and m
    npm install
    ```
 
-3. Create a `.env` file in the root directory with the following variables:
+3. Create a `.env` file in the root directory with the following variables (see `.env.example`):
    ```
    # Database
    DATABASE_URL=postgresql://username:password@localhost:5432/duckshots
@@ -75,6 +75,12 @@ DuckShots SnapAlytics offers a range of features to help Snapchat creators and m
    # Stripe (for subscription management)
    STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
    VITE_STRIPE_PUBLIC_KEY=pk_test_your_stripe_public_key
+   
+   # OAuth (Snapchat)
+   SNAPCHAT_CLIENT_ID=your_snapchat_client_id
+   SNAPCHAT_CLIENT_SECRET=your_snapchat_client_secret
+   # Base URL used to build the OAuth callback. Must match your deployed URL exactly.
+   APP_URL=http://localhost:5000
    ```
 
 4. Initialize the database:
@@ -88,6 +94,15 @@ DuckShots SnapAlytics offers a range of features to help Snapchat creators and m
    ```
 
 6. Open your browser and navigate to http://localhost:5000
+
+### Snapchat OAuth Setup
+
+1. Register your app in the Snapchat Developer Portal (`https://kit.snapchat.com/portal/`).
+2. Add the OAuth redirect URL: `${APP_URL}/api/auth/snapchat/callback`.
+3. Set `SNAPCHAT_CLIENT_ID`, `SNAPCHAT_CLIENT_SECRET`, and `APP_URL` in your `.env`.
+4. In development, start the server with `npm run dev` and test OAuth via the Connect page or `GET /api/auth/snapchat`.
+
+If OAuth env vars are missing, the app will skip registering the Snapchat OAuth routes and log a warning. You can still test using the manual credentials form on `/connect-account` which stores credentials and loads mock data.
 
 ## 🧩 Project Structure
 

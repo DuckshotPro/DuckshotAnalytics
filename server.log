@@ -1,0 +1,127 @@
+[2025-08-27 21:07:26.273] [INFO] Application starting up {"environment":"development","nodeVersion":"v22.16.0"}
+OAuth Setup - Checking environment variables:
+SNAPCHAT_CLIENT_ID: SET
+SNAPCHAT_CLIENT_SECRET: SET
+providers.snapchat.clientID: SET
+providers.snapchat.clientSecret: SET
+✅ OAuth configuration successful - registering routes
+🚀 Starting ETL Pipeline and Job Scheduler...
+📝 Redis not available, using in-memory fallback for development
+🔧 Registered processor for fetch-user-data in data-fetch
+🔧 Registered processor for weekly-reports in report-generation
+🔧 Registered processor for cleanup-old-data in data-cleanup
+✅ ETL Pipeline and Job Scheduler started successfully
+[2025-08-27 21:07:26.352] [INFO] Server started successfully {"port":5000,"host":"0.0.0.0"}
+9:07:26 PM [express] serving on port 5000
+[2025-08-27 21:07:33.437] [ERROR] HTTP 503 {"method":"GET","url":"/api/health","ip":"127.0.0.1","statusCode":503,"userAgent":"curl/8.12.1","duration":"35ms"}
+Error scheduling premium data fetch: ErrorEvent {
+  [Symbol(kTarget)]: WebSocket {
+    _events: [Object: null prototype] {
+      error: [Function],
+      message: [Function],
+      close: [Function],
+      open: [Function]
+    },
+    _eventsCount: 4,
+    _maxListeners: undefined,
+    _binaryType: 'arraybuffer',
+    _closeCode: 1006,
+    _closeFrameReceived: false,
+    _closeFrameSent: false,
+    _closeMessage: <Buffer >,
+    _closeTimer: null,
+    _errorEmitted: true,
+    _extensions: {},
+    _paused: false,
+    _protocol: '',
+    _readyState: 3,
+    _receiver: null,
+    _sender: null,
+    _socket: null,
+    _bufferedAmount: 0,
+    _isServer: false,
+    _redirects: 0,
+    _autoPong: true,
+    _url: 'wss://localhost/v2',
+    _req: null,
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false
+  },
+  [Symbol(kType)]: 'error',
+  [Symbol(kError)]: AggregateError [ECONNREFUSED]: 
+      at internalConnectMultiple (node:net:1139:18)
+      at afterConnectMultiple (node:net:1714:7) {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  },
+  [Symbol(kMessage)]: ''
+}
+[2025-08-28T01:42:10.431Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:25:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.455Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.459Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:35:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.462Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:40:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.465Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.468Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:50:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.470Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:55:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.473Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.476Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:05:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.479Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:10:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.492Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.495Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:20:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.503Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:25:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.505Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.508Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:35:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.511Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:40:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.513Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.515Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:50:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.516Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:55:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.518Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.525Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:05:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.528Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:10:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.530Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.534Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:20:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.539Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:25:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.541Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.543Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:35:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.546Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:40:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.548Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.550Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:50:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.553Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:55:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.556Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.559Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:05:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.563Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:10:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.567Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.569Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:20:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.571Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:25:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.572Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.577Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:35:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.579Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:40:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.586Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.587Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:50:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.589Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:55:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.590Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.591Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:05:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.592Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:10:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.593Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.594Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:20:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.597Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:25:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.598Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.599Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:35:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.600Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:40:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.606Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.608Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 21:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.609Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.610Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.611Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.613Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 22:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.615Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.623Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.624Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.627Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed Aug 27 2025 23:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.629Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.630Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.631Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.635Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 00:45:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.638Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:00:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.640Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:15:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2025-08-28T01:42:10.642Z] [PID: 12069] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu Aug 28 2025 01:30:00 GMT+0000 (Coordinated Universal Time)! Possible blocking IO or high CPU user at the same process used by node-cron.

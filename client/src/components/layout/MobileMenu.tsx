@@ -62,8 +62,9 @@ export function MobileMenu({ isOpen, onClose, isPremium, username }: MobileMenuP
             </Link>
           </SheetClose>
           
+          {/* Fix broken route: /help -> /help-page to match defined router path */}
           <SheetClose asChild>
-            <Link href="/help" className="block p-2 hover:bg-muted rounded-md transition-colors">
+            <Link href="/help-page" className="block p-2 hover:bg-muted rounded-md transition-colors">
               Help
             </Link>
           </SheetClose>

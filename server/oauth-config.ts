@@ -35,7 +35,8 @@ export const providers = {
      * The URL where Snapchat will redirect users after authentication.
      * Must match the callback URL registered in Snapchat's developer portal.
      */
-    callbackURL: `${process.env.APP_URL || "https://duckshot-analytics-420duck1.replit.app"}/api/auth/snapchat/callback`,
+    // Build callback URL from APP_URL; falls back to localhost for dev
+    callbackURL: `${process.env.APP_URL || "http://localhost:5000"}/api/auth/snapchat/callback`,
     
     /**
      * OAuth Scopes
@@ -80,7 +81,7 @@ export const strategyConfig = {
  *    - Support Email: duckshotproductions@gmail.com
  *    - Redirect URLs: https://duckshot-analytics-420duck1.replit.app/api/auth/snapchat/callback
  * 3. Set environment variables for SNAPCHAT_CLIENT_ID and SNAPCHAT_CLIENT_SECRET
- * 4. Set APP_URL to: https://duckshot-analytics-420duck1.replit.app
+ * 4. Set APP_URL to your site URL, e.g., http://localhost:5000 in dev
  * 
  * The OAuth flow will then:
  * 1. Redirect users to Snapchat's authorization page
