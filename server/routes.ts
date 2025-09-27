@@ -559,7 +559,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "No Snapchat data found. Please sync your account first." });
       }
       
-      const segments = generateAudienceSegments(snapchatData);
+      const segments = generateAudienceSegments(snapchatData.data as any);
       res.json(segments);
     } catch (error) {
       console.error("Error fetching audience segments:", error);

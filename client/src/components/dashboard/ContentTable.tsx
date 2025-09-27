@@ -62,7 +62,7 @@ export function ContentTable({ items }: ContentTableProps) {
                 <TableCell className="text-sm">{formatNumber(item.views)}</TableCell>
                 <TableCell>
                   <div className="space-y-1 w-[100px]">
-                    <Progress value={item.completion} className="h-2 bg-muted" indicatorClassName="bg-primary" />
+                    <Progress value={item.completion} className="h-2 bg-muted" />
                     <span className="text-xs text-muted-foreground">{item.completion}%</span>
                   </div>
                 </TableCell>
