@@ -14,6 +14,7 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { z } from "zod";
+import { OrchestratorAgent } from "./agents/orchestrator-agent";
 import { 
   insertUserSchema, 
   insertSnapchatCredentialsSchema, 
@@ -27,6 +28,7 @@ import {
   import { generateAutomatedReport } from "./services/automated-reports";
   import { generateAudienceSegments } from "./services/audience-segmentation";
   import { generateCompetitorAnalysis } from "./services/competitor-analysis";
+import { agentJobQueue } from "./services/job-scheduler";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { setupOAuth } from "./oauth";
@@ -257,17 +259,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/snapchat/refresh", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-
-      if (!user.snapchatClientId || !user.snapchatApiKey) {
-        return res.status(400).json({ message: "Snapchat credentials not found" });
-      }
-
-      const snapchatData = await fetchSnapchatData(user.snapchatClientId, user.snapchatApiKey);
-      await storage.saveSnapchatData(user.id, snapchatData);
-
-      res.json({ message: "Snapchat data refreshed successfully" });
+      await agentJobQueue.add('run-agent-workflow', { userId: user.id });
+      res.json({ message: "Data refresh and analysis has been queued." });
     } catch (error) {
-      res.status(500).json({ message: "Error refreshing Snapchat data" });
+      res.status(500).json({ message: "Error queuing data refresh and analysis" });
     }
   });
 
@@ -347,22 +342,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Premium subscription required" });
       }
 
-      // Get the latest Snapchat data
-      const snapchatData = await storage.getLatestSnapchatData(user.id);
+      await agentJobQueue.add('run-agent-workflow', { userId: user.id });
 
-      if (!snapchatData) {
-        return res.status(404).json({ message: "No Snapchat data found to analyze" });
-      }
-
-      // Generate AI insight
-      const insightText = await generateAiInsight(snapchatData.data);
-
-      // Save the insight
-      const insight = await storage.saveAiInsight(user.id, insightText);
-
-      res.json(insight);
+      res.json({ message: "Insight generation has been queued." });
     } catch (error) {
-      res.status(500).json({ message: "Error generating AI insight" });
+      res.status(500).json({ message: "Error queuing insight generation" });
     }
   });
 

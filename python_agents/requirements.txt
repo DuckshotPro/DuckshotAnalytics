@@ -1,0 +1,32 @@
+# Python Agent System Requirements
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+python-dateutil>=2.8.0
+
+# Optional: If you want to integrate with Google's Agent Development Kit
+# Note: As of writing, Google ADK for Python may not be publicly available
+# This implementation uses a custom base agent class instead
+# google-genai-agents>=0.1.0  # Uncomment when available
+
+# Development dependencies (optional)
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+
+# If you want to add actual Google Gemini API integration
+# google-generativeai>=0.3.0
+
+# For database integration (if needed)
+# psycopg2-binary>=2.9.0  # PostgreSQL
+# SQLAlchemy>=2.0.0  # ORM
+
+# For API integration (if needed)
+# requests>=2.31.0
+# aiohttp>=3.9.0  # For async HTTP requests
+
+# For data processing (if needed)
+# pandas>=2.0.0
+# numpy>=1.24.0

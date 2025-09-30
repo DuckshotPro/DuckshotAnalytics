@@ -16,6 +16,7 @@ import { storage } from '../storage';
 import { fetchSnapchatData } from './snapchat';
 import { generateWeeklyReports } from './automated-reports';
 import { User } from '@shared/schema';
+import { OrchestratorAgent } from '../agents/orchestrator-agent';
 
 // Redis connection for queue management - fallback to in-memory for development
 let redis: Redis | null = null;
@@ -54,6 +55,7 @@ async function initializeRedis() {
 export let dataFetchQueue: Bull.Queue | DevelopmentQueue;
 export let reportGenerationQueue: Bull.Queue | DevelopmentQueue;
 export let dataCleanupQueue: Bull.Queue | DevelopmentQueue;
+export let agentJobQueue: Bull.Queue | DevelopmentQueue;
 
 // Initialize queues
 async function initializeQueues() {
@@ -63,10 +65,12 @@ async function initializeQueues() {
     dataFetchQueue = new Bull('data-fetch', { redis: { host: 'localhost', port: 6379 } });
     reportGenerationQueue = new Bull('report-generation', { redis: { host: 'localhost', port: 6379 } });
     dataCleanupQueue = new Bull('data-cleanup', { redis: { host: 'localhost', port: 6379 } });
+    agentJobQueue = new Bull('agent-job', { redis: { host: 'localhost', port: 6379 } });
   } else {
     dataFetchQueue = new DevelopmentQueue('data-fetch');
     reportGenerationQueue = new DevelopmentQueue('report-generation');
     dataCleanupQueue = new DevelopmentQueue('data-cleanup');
+    agentJobQueue = new DevelopmentQueue('agent-job');
   }
 }
 
@@ -359,6 +363,19 @@ class SnapchatETLScheduler implements JobScheduler {
           error: error instanceof Error ? error.message : 'Unknown error'
         });
         
+        throw error;
+      }
+    });
+
+    agentJobQueue.process('run-agent-workflow', async (job) => {
+      const { userId } = job.data;
+      try {
+        console.log(`🤖 Running agent workflow for user ${userId}`);
+        const orchestrator = new OrchestratorAgent();
+        await orchestrator.run(userId);
+        console.log(`✅ Agent workflow completed for user ${userId}`);
+      } catch (error) {
+        console.error(`❌ Error running agent workflow for user ${userId}:`, error);
         throw error;
       }
     });
