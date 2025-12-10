@@ -23,20 +23,12 @@ import {
   User
 } from "@shared/schema";
 // Import required services
-<<<<<<< HEAD
 import { fetchSnapchatData } from "./services/snapchat";
 import { generateAiInsight } from "./services/gemini";
 import { generateAutomatedReport } from "./services/automated-reports";
 import { generateAudienceSegments } from "./services/audience-segmentation";
 import { generateCompetitorAnalysis } from "./services/competitor-analysis";
 import paypalService from "./services/paypal";
-import { agentJobQueue } from "./services/job-scheduler";
-=======
-  import { fetchSnapchatData } from "./services/snapchat";
-  import { generateAiInsight } from "./services/gemini";
-  import { generateAutomatedReport } from "./services/automated-reports";
-  import { generateAudienceSegments } from "./services/audience-segmentation";
-  import { generateCompetitorAnalysis } from "./services/competitor-analysis";
 import { pushToAgentWorker } from "./services/job-scheduler";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
