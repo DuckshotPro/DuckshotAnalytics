@@ -29,9 +29,9 @@ app.use(express.urlencoded({ extended: false }));  // Parse URL-encoded request 
 app.use(requestLogger);
 
 // Log application startup
-logger.info("Application starting up", { 
-  environment: app.get("env"), 
-  nodeVersion: process.version 
+logger.info("Application starting up", {
+  environment: app.get("env"),
+  nodeVersion: process.version
 });
 
 /**
@@ -58,7 +58,7 @@ logger.info("Application starting up", {
   try {
     const { jobScheduler } = await import('./services/job-scheduler');
     await jobScheduler.start();
-    
+
     // Graceful shutdown handling
     const shutdown = () => {
       logger.info('Shutting down server gracefully...');
@@ -68,7 +68,7 @@ logger.info("Application starting up", {
         process.exit(0);
       });
     };
-    
+
     process.on('SIGTERM', shutdown);
     process.on('SIGINT', shutdown);
   } catch (error) {
@@ -139,11 +139,7 @@ logger.info("Application starting up", {
    * This port serves both the API and the client application.
    */
   const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",  // Bind to all network interfaces
-    reusePort: true,  // Allow multiple instances to bind to the same port (useful for clustering)
-  }, () => {
+  server.listen(port, "0.0.0.0", () => {
     logger.info(`Server started successfully`, { port, host: "0.0.0.0" });
     log(`serving on port ${port}`);
   });
