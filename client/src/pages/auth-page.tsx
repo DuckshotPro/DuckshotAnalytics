@@ -50,9 +50,9 @@ export default function AuthPage() {
 
   const onLoginSubmit = async (data: AuthFormValues) => {
     try {
-      await loginMutation.mutateAsync({ 
-        username: data.username, 
-        password: data.password 
+      await loginMutation.mutateAsync({
+        username: data.username,
+        password: data.password
       });
       navigate("/dashboard");
     } catch (error) {
@@ -63,9 +63,9 @@ export default function AuthPage() {
 
   const onRegisterSubmit = async (data: AuthFormValues) => {
     try {
-      await registerMutation.mutateAsync({ 
-        username: data.username, 
-        password: data.password 
+      await registerMutation.mutateAsync({
+        username: data.username,
+        password: data.password
       });
       navigate("/dashboard");
     } catch (error) {
@@ -109,8 +109,8 @@ export default function AuthPage() {
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="register">Register</TabsTrigger>
               </TabsList>
-              
-              <TabsContent value="login">
+
+              <TabsContent value="login" forceMount style={{ display: activeTab !== "login" ? 'none' : 'block' }}>
                 <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="login-username">Username</Label>
@@ -124,7 +124,7 @@ export default function AuthPage() {
                       <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>
                     <Input
@@ -137,9 +137,9 @@ export default function AuthPage() {
                       <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
                     )}
                   </div>
-                  
-                  <Button 
-                    type="submit" 
+
+                  <Button
+                    type="submit"
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     disabled={loginMutation.isPending}
                   >
@@ -147,8 +147,8 @@ export default function AuthPage() {
                   </Button>
                 </form>
               </TabsContent>
-              
-              <TabsContent value="register">
+
+              <TabsContent value="register" forceMount style={{ display: activeTab !== "register" ? 'none' : 'block' }}>
                 <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="register-username">Username</Label>
@@ -162,7 +162,7 @@ export default function AuthPage() {
                       <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="register-password">Password</Label>
                     <Input
@@ -175,9 +175,9 @@ export default function AuthPage() {
                       <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
                     )}
                   </div>
-                  
-                  <Button 
-                    type="submit" 
+
+                  <Button
+                    type="submit"
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     disabled={registerMutation.isPending}
                   >
@@ -189,7 +189,7 @@ export default function AuthPage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Right Column - Hero */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-r from-primary to-yellow-400 p-12 flex-col justify-center">
         <div className="max-w-lg">

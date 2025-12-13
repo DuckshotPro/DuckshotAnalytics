@@ -1,8 +1,6 @@
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function Home() {
@@ -10,7 +8,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
 
       <main className="flex-1">
         {/* Hero Section */}
@@ -164,7 +161,6 @@ export default function Home() {
         </section>
       </main>
 
-      <Footer />
     </div>
   );
 }
