@@ -16,37 +16,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { formatDateWithTime } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Users, Eye, Heart, CheckCircle } from "lucide-react";
+import { RefreshCw, Users, Eye, Heart, CheckCircle, AlertCircle, Mail } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
-  const { 
-    isConnected, 
-    isLoading, 
-    audienceGrowthData, 
-    demographicsData, 
-    contentItems, 
+  const { toast } = useToast();
+  const [resendingEmail, setResendingEmail] = useState(false);
+  const {
+    isConnected,
+    isLoading,
+    audienceGrowthData,
+    demographicsData,
+    contentItems,
     stats,
     lastUpdated,
-    refreshData 
+    refreshData
   } = useSnapchatData();
-  
+
   const [timeRange, setTimeRange] = useState("30");
-  
+
   useEffect(() => {
     // If user is not authenticated, redirect to home
     if (!user) {
       navigate("/");
       return;
     }
-    
+
     // If not connected to Snapchat, redirect to connect page
     if (user && !isConnected) {
       navigate("/connect");
     }
   }, [user, isConnected, navigate]);
-  
+
   // Protected route handles authentication check now
   // Just check if Snapchat is connected
   if (!isConnected) {
@@ -64,11 +67,65 @@ export default function Dashboard() {
       </div>
     );
   }
-  
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
+
+      {/* Email Verification Banner */}
+      {user && user.email && !user.emailVerified && (
+        <div className="bg-yellow-50 border-b border-yellow-200">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-yellow-800">
+                    Please verify your email address
+                  </p>
+                  <p className="text-xs text-yellow-700">
+                    Check your inbox for a verification link or click below to resend
+                  </p>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-yellow-600 text-yellow-700 hover:bg-yellow-100"
+                onClick={async () => {
+                  setResendingEmail(true);
+                  try {
+                    const response = await fetch('/api/auth/resend-verification', {
+                      method: 'POST',
+                    });
+                    if (response.ok) {
+                      toast({
+                        title: 'Email sent!',
+                        description: 'Check your inbox for the verification link.',
+                      });
+                    } else {
+                      throw new Error('Failed to resend');
+                    }
+                  } catch (error) {
+                    toast({
+                      title: 'Error',
+                      description: 'Failed to resend verification email. Please try again.',
+                      variant: 'destructive',
+                    });
+                  } finally {
+                    setResendingEmail(false);
+                  }
+                }}
+                disabled={resendingEmail}
+              >
+                <Mail className="mr-2 h-4 w-4" />
+                {resendingEmail ? 'Sending...' : 'Resend Email'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="flex-1 container mx-auto px-4 py-6">
         {/* Dashboard Header */}
         <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
@@ -93,8 +150,8 @@ export default function Dashboard() {
                 <SelectItem value="90">Last 90 days</SelectItem>
               </SelectContent>
             </Select>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="bg-white"
               onClick={() => refreshData.mutate()}
               disabled={refreshData.isPending}
@@ -104,7 +161,7 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
-        
+
         {/* Stats Summary */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {isLoading ? (
@@ -147,7 +204,7 @@ export default function Dashboard() {
             </>
           )}
         </div>
-        
+
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {isLoading ? (
@@ -164,29 +221,29 @@ export default function Dashboard() {
             </>
           )}
         </div>
-        
+
         {/* Content Performance */}
         {isLoading ? (
           <Skeleton className="h-96 mb-6" />
         ) : (
           <ContentTable items={contentItems} />
         )}
-        
+
         {/* Premium Features & Analytics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <PremiumFeature />
           <CompetitorAnalysis />
         </div>
-        
+
         {/* Ad Section */}
         <div className="mb-6">
           <AdSection />
         </div>
-        
+
         {/* Upgrade Prompt */}
         <UpgradePrompt />
       </main>
-      
+
       <Footer />
     </div>
   );

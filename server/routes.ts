@@ -20,6 +20,7 @@ import {
   insertSnapchatCredentialsSchema,
   userDataPreferencesSchema,
   users,
+  verificationTokens,
   User
 } from "@shared/schema";
 // Import required services
@@ -36,6 +37,11 @@ import { setupOAuth } from "./oauth";
 import { HealthMonitor, healthMonitor } from './services/health-monitor';
 import { productionAlerts } from './services/production-alerts';
 import logger from "./logger";
+import verificationRoutes from './routes/verification-routes';
+import { sendVerificationEmail } from './services/email-service';
+import crypto from 'crypto';
+import { hashToken } from './utils/token-hash';
+import { registrationLimiter } from './middleware/rate-limit';
 
 const scryptAsync = promisify(scrypt);
 
@@ -102,6 +108,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up OAuth authentication
   setupOAuth(app);
 
+  // Register verification routes
+  app.use('/api/auth', verificationRoutes);
+
   // Authentication middleware
   const isAuthenticated = (req: Request, res: Response, next: Function) => {
     if (req.isAuthenticated()) {
@@ -111,7 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // Authentication routes
-  app.post("/api/auth/signup", async (req, res) => {
+  app.post("/api/auth/signup", registrationLimiter, async (req, res) => {
     try {
       try {
         insertUserSchema.parse(req.body);
@@ -137,11 +146,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const user = await storage.createUser(userData);
+
+      // Generate verification token
+      if (user.email) {
+        const plainToken = crypto.randomBytes(32).toString('hex');
+        const hashedTokenValue = await hashToken(plainToken);
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+        // Store hashed token in database
+        await db.insert(verificationTokens).values({
+          userId: user.id,
+          token: hashedTokenValue,
+          expiresAt,
+        });
+
+        // Send verification email with plain token
+        try {
+          await sendVerificationEmail({
+            to: user.email,
+            username: user.username,
+            verificationToken: plainToken,
+          });
+        } catch (emailError) {
+          console.error('Error sending verification email:', emailError);
+          // Continue with registration even if email fails
+        }
+      }
+
+      // Log in the user after signup
       req.login(user, (err) => {
         if (err) {
           return res.status(500).json({ message: "Error logging in after signup" });
         }
-        return res.status(201).json(user);
+        return res.status(201).json({
+          ...user,
+          message: user.email ? 'Account created! Please check your email to verify your account.' : 'Account created!'
+        });
       });
     } catch (error) {
       res.status(500).json({ message: "Error creating user" });

@@ -21,6 +21,7 @@ type AuthFormValues = z.infer<typeof authSchema>;
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
+  const [showEmailSent, setShowEmailSent] = useState(false);
   const { loginMutation, registerMutation, user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -63,11 +64,17 @@ export default function AuthPage() {
 
   const onRegisterSubmit = async (data: AuthFormValues) => {
     try {
-      await registerMutation.mutateAsync({
+      const result = await registerMutation.mutateAsync({
         username: data.username,
         password: data.password
-      });
-      navigate("/dashboard");
+      }) as any; // Backend may include message field
+
+      // Check if verification email was sent
+      if (result?.message && result.message.includes('check your email')) {
+        setShowEmailSent(true);
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       // Error is already handled by the mutation
       console.error(error);
@@ -149,41 +156,68 @@ export default function AuthPage() {
               </TabsContent>
 
               <TabsContent value="register" forceMount style={{ display: activeTab !== "register" ? 'none' : 'block' }}>
-                <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="register-username">Username</Label>
-                    <Input
-                      id="register-username"
-                      type="text"
-                      placeholder="Choose a username"
-                      {...registerForm.register("username")}
-                    />
-                    {registerForm.formState.errors.username && (
-                      <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
-                    )}
+                {showEmailSent ? (
+                  <div className="space-y-4 text-center py-8">
+                    <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Check Your Email!</h3>
+                      <p className="text-gray-600 mb-4">
+                        We've sent a verification link to your email address.
+                        Please check your inbox and click the link to verify your account.
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Didn't receive the email? Check your spam folder or{' '}
+                        <button
+                          onClick={() => setActiveTab('login')}
+                          className="text-primary hover:underline"
+                        >
+                          log in
+                        </button>
+                        {' '}to request a new verification email.
+                      </p>
+                    </div>
                   </div>
+                ) : (
+                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-username">Username</Label>
+                      <Input
+                        id="register-username"
+                        type="text"
+                        placeholder="Choose a username"
+                        {...registerForm.register("username")}
+                      />
+                      {registerForm.formState.errors.username && (
+                        <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
+                      )}
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="register-password">Password</Label>
-                    <Input
-                      id="register-password"
-                      type="password"
-                      placeholder="Create a password"
-                      {...registerForm.register("password")}
-                    />
-                    {registerForm.formState.errors.password && (
-                      <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
-                    )}
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-password">Password</Label>
+                      <Input
+                        id="register-password"
+                        type="password"
+                        placeholder="Create a password"
+                        {...registerForm.register("password")}
+                      />
+                      {registerForm.formState.errors.password && (
+                        <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
+                      )}
+                    </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    disabled={registerMutation.isPending}
-                  >
-                    {registerMutation.isPending ? "Creating account..." : "Create account"}
-                  </Button>
-                </form>
+                    <Button
+                      type="submit"
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                      disabled={registerMutation.isPending}
+                    >
+                      {registerMutation.isPending ? "Creating account..." : "Create account"}
+                    </Button>
+                  </form>
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>
