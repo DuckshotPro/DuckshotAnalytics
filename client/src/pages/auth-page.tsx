@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
@@ -134,9 +135,8 @@ export default function AuthPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>
-                    <Input
+                    <PasswordInput
                       id="login-password"
-                      type="password"
                       placeholder="Enter your password"
                       {...loginForm.register("password")}
                     />
@@ -198,9 +198,8 @@ export default function AuthPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="register-password">Password</Label>
-                      <Input
+                      <PasswordInput
                         id="register-password"
-                        type="password"
                         placeholder="Create a password"
                         {...registerForm.register("password")}
                       />
