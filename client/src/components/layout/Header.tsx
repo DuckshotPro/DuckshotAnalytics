@@ -96,6 +96,7 @@ export function Header() {
               variant="ghost" 
               className="md:hidden" 
               onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open mobile menu"
             >
               <Menu className="h-6 w-6" />
             </Button>
