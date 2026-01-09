@@ -1,3 +1,5 @@
-## 2026-01-02 - Accessible Skip Link & Decorative SVGs
-**Learning:** Added a skip-to-content link, a critical yet often overlooked a11y feature. It is hidden until focused, respecting the design while empowering keyboard users. Also marked purely decorative SVGs with `aria-hidden="true"` to reduce screen reader noise.
-**Action:** Always check for a main content skip mechanism in new projects and ensure purely decorative icons are hidden from AT.
+# Palette's Journal
+
+## 2024-05-23 - Accessibility of Hidden Forms
+**Learning:** When multiple forms (Login/Register) exist on the same page but are toggled via visibility, screen readers and automation tools can struggle to distinguish them if they share generic selectors.
+**Action:** Always scope selectors to the visible container or use specific text/aria-labels that distinguish the context (e.g., "Create account" button vs "Sign in" button).
