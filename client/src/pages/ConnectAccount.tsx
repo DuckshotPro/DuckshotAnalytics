@@ -16,12 +16,14 @@ import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { ConsentDialog } from "@/components/consent-dialog";
 import { Link } from "wouter";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function ConnectAccount() {
   const { connectSnapchatMutation, user } = useAuth();
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [showConsentDialog, setShowConsentDialog] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
   const [pendingCredentials, setPendingCredentials] = useState<{
     snapchatClientId: string;
     snapchatApiKey: string;
@@ -126,12 +128,29 @@ export default function ConnectAccount() {
 
               <div className="space-y-2">
                 <Label htmlFor="snapchatApiKey">API Secret Key</Label>
-                <Input 
-                  id="snapchatApiKey"
-                  type="password" 
-                  placeholder="Enter your Snapchat API Secret Key"
-                  {...form.register("snapchatApiKey")}
-                />
+                <div className="relative">
+                  <Input
+                    id="snapchatApiKey"
+                    type={showApiKey ? "text" : "password"}
+                    placeholder="Enter your Snapchat API Secret Key"
+                    className="pr-10"
+                    {...form.register("snapchatApiKey")}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    aria-label={showApiKey ? "Hide API key" : "Show API key"}
+                  >
+                    {showApiKey ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
                 {form.formState.errors.snapchatApiKey && (
                   <p className="text-sm text-destructive">{form.formState.errors.snapchatApiKey.message}</p>
                 )}
