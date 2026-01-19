@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Eye, EyeOff } from "lucide-react";
+import { PasswordInput } from "@/components/ui/password-input";
 
 const authSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
@@ -23,8 +23,6 @@ type AuthFormValues = z.infer<typeof authSchema>;
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [showEmailSent, setShowEmailSent] = useState(false);
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const { loginMutation, registerMutation, user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -137,29 +135,11 @@ export default function AuthPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="login-password"
-                        type={showLoginPassword ? "text" : "password"}
-                        placeholder="Enter your password"
-                        className="pr-10"
-                        {...loginForm.register("password")}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowLoginPassword(!showLoginPassword)}
-                        aria-label={showLoginPassword ? "Hide password" : "Show password"}
-                      >
-                        {showLoginPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
-                    </div>
+                    <PasswordInput
+                      id="login-password"
+                      placeholder="Enter your password"
+                      {...loginForm.register("password")}
+                    />
                     {loginForm.formState.errors.password && (
                       <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
                     )}
@@ -218,29 +198,11 @@ export default function AuthPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="register-password">Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="register-password"
-                          type={showRegisterPassword ? "text" : "password"}
-                          placeholder="Create a password"
-                          className="pr-10"
-                          {...registerForm.register("password")}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                          onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                          aria-label={showRegisterPassword ? "Hide password" : "Show password"}
-                        >
-                          {showRegisterPassword ? (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </Button>
-                      </div>
+                      <PasswordInput
+                        id="register-password"
+                        placeholder="Create a password"
+                        {...registerForm.register("password")}
+                      />
                       {registerForm.formState.errors.password && (
                         <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
                       )}
