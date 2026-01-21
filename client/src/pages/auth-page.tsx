@@ -128,10 +128,13 @@ export default function AuthPage() {
                       id="login-username"
                       type="text"
                       placeholder="Enter your username"
+                      autoComplete="username"
+                      aria-invalid={!!loginForm.formState.errors.username}
+                      aria-describedby={loginForm.formState.errors.username ? "login-username-error" : undefined}
                       {...loginForm.register("username")}
                     />
                     {loginForm.formState.errors.username && (
-                      <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
+                      <p id="login-username-error" className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
                     )}
                   </div>
 
@@ -142,6 +145,9 @@ export default function AuthPage() {
                         id="login-password"
                         type={showLoginPassword ? "text" : "password"}
                         placeholder="Enter your password"
+                        autoComplete="current-password"
+                        aria-invalid={!!loginForm.formState.errors.password}
+                        aria-describedby={loginForm.formState.errors.password ? "login-password-error" : undefined}
                         className="pr-10"
                         {...loginForm.register("password")}
                       />
@@ -161,7 +167,7 @@ export default function AuthPage() {
                       </Button>
                     </div>
                     {loginForm.formState.errors.password && (
-                      <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
+                      <p id="login-password-error" className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
                     )}
                   </div>
 
@@ -209,10 +215,13 @@ export default function AuthPage() {
                         id="register-username"
                         type="text"
                         placeholder="Choose a username"
+                        autoComplete="username"
+                        aria-invalid={!!registerForm.formState.errors.username}
+                        aria-describedby={registerForm.formState.errors.username ? "register-username-error" : undefined}
                         {...registerForm.register("username")}
                       />
                       {registerForm.formState.errors.username && (
-                        <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
+                        <p id="register-username-error" className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
                       )}
                     </div>
 
@@ -223,6 +232,9 @@ export default function AuthPage() {
                           id="register-password"
                           type={showRegisterPassword ? "text" : "password"}
                           placeholder="Create a password"
+                          autoComplete="new-password"
+                          aria-invalid={!!registerForm.formState.errors.password}
+                          aria-describedby={registerForm.formState.errors.password ? "register-password-error" : undefined}
                           className="pr-10"
                           {...registerForm.register("password")}
                         />
@@ -242,7 +254,7 @@ export default function AuthPage() {
                         </Button>
                       </div>
                       {registerForm.formState.errors.password && (
-                        <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
+                        <p id="register-password-error" className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
                       )}
                     </div>
 

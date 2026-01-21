@@ -12,3 +12,11 @@
 ## 2026-01-16 - Radix Slot & Conditional Children
 **Learning:** Radix UI's `Slot` component (used via `asChild`) is strictly single-child. Conditional rendering patterns like `{condition && <Icon />}` or `{condition ? <><Icon />{children}</> : children}` must be carefully structured. Specifically, simple short-circuiting `{condition && <A />}{children}` can return an array `[false, children]`, causing `React.Children.only` to crash.
 **Action:** When using `asChild`, ensure conditional children are wrapped or structured so that exactly one React Element is returned to the Slot.
+
+## 2026-01-21 - Button Polymorphism Bug
+**Learning:** The `Button` component implemented the logic for `asChild` (determining `Comp`) but failed to use `Comp` in the return statement, rendering a hardcoded `<button>` instead. This silently broke polymorphism and caused TypeScript errors due to mismatched tags.
+**Action:** Always verify that components supporting `asChild` actually render the dynamic component variable (e.g., `<Comp>`) rather than a static HTML tag.
+
+## 2026-01-21 - Manual Form Accessibility
+**Learning:** Forms using `react-hook-form` without the Shadcn `Form` wrapper components do not automatically get accessibility attributes. `aria-invalid` and `aria-describedby` must be manually added to inputs and linked to error message IDs.
+**Action:** When auditing forms, check for manual `register` calls and ensure corresponding ARIA attributes are explicitly defined.
