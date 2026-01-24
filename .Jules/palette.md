@@ -12,3 +12,7 @@
 ## 2026-01-16 - Radix Slot & Conditional Children
 **Learning:** Radix UI's `Slot` component (used via `asChild`) is strictly single-child. Conditional rendering patterns like `{condition && <Icon />}` or `{condition ? <><Icon />{children}</> : children}` must be carefully structured. Specifically, simple short-circuiting `{condition && <A />}{children}` can return an array `[false, children]`, causing `React.Children.only` to crash.
 **Action:** When using `asChild`, ensure conditional children are wrapped or structured so that exactly one React Element is returned to the Slot.
+
+## 2026-01-24 - Accessible Stat Changes
+**Learning:** Visual indicators like arrows and colors are insufficient for screen readers. Explicitly creating "sr-only" text (e.g., "Increased by") alongside hiding the decorative icons ensures semantic clarity.
+**Action:** When displaying trends or changes, always pair the visual indicator with a screen-reader-only text description.
