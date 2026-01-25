@@ -32,7 +32,13 @@ export function StatCard({ title, value, change, icon, iconBgColor }: StatCardPr
             <span>{formattedChange}</span>
           </div>
         </div>
-        <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", iconBgColor)}>
+        <div
+          className={cn(
+            "w-10 h-10 rounded-full flex items-center justify-center",
+            iconBgColor
+          )}
+          aria-hidden="true"
+        >
           {icon}
         </div>
       </div>
