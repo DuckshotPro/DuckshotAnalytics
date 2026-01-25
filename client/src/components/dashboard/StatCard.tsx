@@ -21,7 +21,14 @@ export function StatCard({ title, value, change, icon, iconBgColor }: StatCardPr
           <p className="text-muted-foreground text-sm">{title}</p>
           <h3 className="text-2xl font-bold text-foreground">{formattedValue}</h3>
           <div className={cn("flex items-center text-sm mt-1", getGrowthColor(change))}>
-            {isPositive ? <ArrowUp className="w-3 h-3 mr-1" /> : <ArrowDown className="w-3 h-3 mr-1" />}
+            {isPositive ? (
+              <ArrowUp className="w-3 h-3 mr-1" aria-hidden="true" />
+            ) : (
+              <ArrowDown className="w-3 h-3 mr-1" aria-hidden="true" />
+            )}
+            <span className="sr-only">
+              {isPositive ? "Increased by" : "Decreased by"}
+            </span>
             <span>{formattedChange}</span>
           </div>
         </div>
