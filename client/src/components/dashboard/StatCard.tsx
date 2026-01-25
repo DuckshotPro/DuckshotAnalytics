@@ -27,7 +27,7 @@ export function StatCard({ title, value, change, icon, iconBgColor }: StatCardPr
               <ArrowDown className="w-3 h-3 mr-1" aria-hidden="true" />
             )}
             <span className="sr-only">
-              {isPositive ? "Increased by " : "Decreased by "}
+              {isPositive ? "Increased by" : "Decreased by"}
             </span>
             <span>{formattedChange}</span>
           </div>
