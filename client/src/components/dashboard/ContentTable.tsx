@@ -1,5 +1,5 @@
 import { formatNumber, formatDate } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -36,43 +36,58 @@ export function ContentTable({ items }: ContentTableProps) {
         </Button>
       </div>
       
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Content</TableHead>
-              <TableHead>Views</TableHead>
-              <TableHead>Completion</TableHead>
-              <TableHead>Screenshots</TableHead>
-              <TableHead>Shares</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id} className="hover:bg-muted/50">
-                <TableCell>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-muted rounded flex-shrink-0"></div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-foreground">{item.title}</p>
-                      <p className="text-xs text-muted-foreground">{formatDate(item.date)}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm">{formatNumber(item.views)}</TableCell>
-                <TableCell>
-                  <div className="space-y-1 w-[100px]">
-                    <Progress value={item.completion} className="h-2 bg-muted" indicatorClassName="bg-primary" />
-                    <span className="text-xs text-muted-foreground">{item.completion}%</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm">{formatNumber(item.screenshots)}</TableCell>
-                <TableCell className="text-sm">{formatNumber(item.shares)}</TableCell>
+      {items.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="bg-muted/50 p-4 rounded-full mb-3">
+            <Camera className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+          </div>
+          <h4 className="text-lg font-medium text-foreground mb-1">No content found</h4>
+          <p className="text-sm text-muted-foreground max-w-xs">
+            Start posting stories on Snapchat to see your performance metrics here.
+          </p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Content</TableHead>
+                <TableHead>Views</TableHead>
+                <TableHead>Completion</TableHead>
+                <TableHead>Screenshots</TableHead>
+                <TableHead>Shares</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow key={item.id} className="hover:bg-muted/50">
+                  <TableCell>
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-muted rounded flex-shrink-0"></div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-foreground">{item.title}</p>
+                        <p className="text-xs text-muted-foreground">{formatDate(item.date)}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">{formatNumber(item.views)}</TableCell>
+                  <TableCell>
+                    <div className="space-y-1 w-[100px]">
+                      <Progress
+                        value={item.completion}
+                        className="h-2 bg-muted"
+                      />
+                      <span className="text-xs text-muted-foreground">{item.completion}%</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">{formatNumber(item.screenshots)}</TableCell>
+                  <TableCell className="text-sm">{formatNumber(item.shares)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 }

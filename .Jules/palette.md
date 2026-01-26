@@ -16,3 +16,7 @@
 ## 2026-05-22 - Trend Indicators & Screen Readers
 **Learning:** Visual trend indicators (arrows + color) are insufficient for screen readers. `StatCard` displayed percentage change without indicating "increase" or "decrease" in text.
 **Action:** Always append `sr-only` text (e.g., "Increased by") to trend indicators and hide decorative icons with `aria-hidden="true"`.
+
+## 2026-06-15 - Empty States Strategy
+**Learning:** When adding empty states to data tables, replacing the entire table (including headers) with the empty state is often better than keeping empty headers. It reduces clutter and allows for a more focused, helpful message and action.
+**Action:** For tables with no data, conditionally render a dedicated empty state component instead of an empty table body.
