@@ -13,6 +13,6 @@
 **Learning:** Radix UI's `Slot` component (used via `asChild`) is strictly single-child. Conditional rendering patterns like `{condition && <Icon />}` or `{condition ? <><Icon />{children}</> : children}` must be carefully structured. Specifically, simple short-circuiting `{condition && <A />}{children}` can return an array `[false, children]`, causing `React.Children.only` to crash.
 **Action:** When using `asChild`, ensure conditional children are wrapped or structured so that exactly one React Element is returned to the Slot.
 
-## 2026-01-24 - Broken Polymorphic Components
-**Learning:** The `Button` component defined a dynamic `Comp` variable for polymorphism (via `asChild` and Radix Slot) but erroneously rendered a hardcoded `<button>` tag. This rendered the `asChild` prop ineffective and broke semantic HTML when used with links.
-**Action:** When implementing or auditing polymorphic components (like shadcn/ui buttons), rigorously verify that the returned JSX element uses the dynamic component variable (e.g., `<Comp>`) instead of a static HTML tag.
+## 2026-05-22 - Trend Indicators & Screen Readers
+**Learning:** Visual trend indicators (arrows + color) are insufficient for screen readers. `StatCard` displayed percentage change without indicating "increase" or "decrease" in text.
+**Action:** Always append `sr-only` text (e.g., "Increased by") to trend indicators and hide decorative icons with `aria-hidden="true"`.
