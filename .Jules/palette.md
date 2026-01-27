@@ -16,3 +16,7 @@
 ## 2026-05-22 - Trend Indicators & Screen Readers
 **Learning:** Visual trend indicators (arrows + color) are insufficient for screen readers. `StatCard` displayed percentage change without indicating "increase" or "decrease" in text.
 **Action:** Always append `sr-only` text (e.g., "Increased by") to trend indicators and hide decorative icons with `aria-hidden="true"`.
+
+## 2026-01-27 - Empty States & Contextual Help
+**Learning:** Data-heavy components like `ContentTable` often lack empty states, leaving users confused when no data exists. A dedicated empty state with an icon and actionable helper text improves guidance significantly.
+**Action:** When implementing lists or tables, always include a conditionally rendered empty state block (icon + title + description) for the `length === 0` case.
