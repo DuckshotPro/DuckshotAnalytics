@@ -16,3 +16,7 @@
 ## 2026-05-22 - Trend Indicators & Screen Readers
 **Learning:** Visual trend indicators (arrows + color) are insufficient for screen readers. `StatCard` displayed percentage change without indicating "increase" or "decrease" in text.
 **Action:** Always append `sr-only` text (e.g., "Increased by") to trend indicators and hide decorative icons with `aria-hidden="true"`.
+
+## 2026-01-28 - Radix Progress Styling
+**Learning:** The Shadcn/Radix `Progress` component wrapper may not expose the underlying `Indicator` for styling via props like `indicatorClassName`. Passing such props results in dead code.
+**Action:** Verify component definitions when props seem to have no effect; customize via the component file or global overrides if needed.
