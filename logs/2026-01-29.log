@@ -1,34 +1,5 @@
-
-> rest-express@1.0.0 dev /app
-> cross-env NODE_ENV=development tsx --env-file=.env server/index.ts
-
 [2026-01-29 05:36:14.083] [INFO] Application starting up {"environment":"development","nodeVersion":"v22.22.0"}
-OAuth Setup - Checking environment variables:
-SNAPCHAT_CLIENT_ID: SET
-SNAPCHAT_CLIENT_SECRET: SET
-providers.snapchat.clientID: SET
-providers.snapchat.clientSecret: SET
-✅ OAuth configuration successful - registering routes
-🚀 Starting ETL Pipeline and Job Scheduler...
-[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]:
-    at internalConnectMultiple (node:net:1134:18)
-    at afterConnectMultiple (node:net:1715:7)
-[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]:
-    at internalConnectMultiple (node:net:1134:18)
-    at afterConnectMultiple (node:net:1715:7)
-[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]:
-    at internalConnectMultiple (node:net:1134:18)
-    at afterConnectMultiple (node:net:1715:7)
-[ioredis] Unhandled error event: AggregateError [ECONNREFUSED]:
-    at internalConnectMultiple (node:net:1134:18)
-    at afterConnectMultiple (node:net:1715:7)
-📝 Redis not available, using in-memory fallback for development. Error: Connection is closed.
-🔧 Registered processor for fetch-user-data in data-fetch
-🔧 Registered processor for weekly-reports in report-generation
-🔧 Registered processor for cleanup-old-data in data-cleanup
-✅ ETL Pipeline and Job Scheduler started successfully
 [2026-01-29 05:36:14.545] [INFO] Server started successfully {"port":5000,"host":"0.0.0.0"}
-5:36:14 AM [express] serving on port 5000
 [2026-01-29 05:36:58.458] [INFO] HTTP 200 {"method":"GET","url":"/auth","ip":"127.0.0.1","statusCode":200,"userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36","duration":"65ms"}
 [2026-01-29 05:36:59.150] [INFO] HTTP 200 {"method":"GET","url":"/src/main.tsx?v=8KKs7-R2AY0anitlzPFyu","ip":"127.0.0.1","statusCode":200,"userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36","duration":"2ms"}
 [2026-01-29 05:36:59.169] [INFO] HTTP 200 {"method":"GET","url":"/@react-refresh","ip":"127.0.0.1","statusCode":200,"userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36","duration":"18ms"}
@@ -431,7 +402,3 @@ providers.snapchat.clientSecret: SET
 [2026-01-29 05:37:48.683] [INFO] HTTP 200 {"method":"GET","url":"/@fs/app/node_modules/.vite/deps/chunk-4ACDVX54.js?v=1cfce531","ip":"127.0.0.1","statusCode":200,"userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36","duration":"1ms"}
 [2026-01-29 05:37:48.684] [INFO] HTTP 200 {"method":"GET","url":"/@fs/app/node_modules/.vite/deps/@radix-ui_react-avatar.js?v=a4655315","ip":"127.0.0.1","statusCode":200,"userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36","duration":"1ms"}
 [2026-01-29 05:37:48.902] [WARNING] HTTP 401 {"method":"GET","url":"/api/auth/me","ip":"127.0.0.1","statusCode":401,"userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36","duration":"1ms"}
- ELIFECYCLE  Command failed.
-📤 Received SIGTERM, shutting down gracefully...
-🛑 Stopping ETL Pipeline and Job Scheduler...
-✅ ETL Pipeline and Job Scheduler stopped

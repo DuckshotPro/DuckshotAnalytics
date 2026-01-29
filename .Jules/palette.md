@@ -16,3 +16,7 @@
 ## 2026-05-22 - Trend Indicators & Screen Readers
 **Learning:** Visual trend indicators (arrows + color) are insufficient for screen readers. `StatCard` displayed percentage change without indicating "increase" or "decrease" in text.
 **Action:** Always append `sr-only` text (e.g., "Increased by") to trend indicators and hide decorative icons with `aria-hidden="true"`.
+
+## 2026-01-29 - Encapsulated Password Toggles
+**Learning:** Manual implementation of password visibility toggles often leads to state bugs (e.g. missing state variables) and inconsistent accessibility attributes.
+**Action:** Use a dedicated `PasswordInput` component that encapsulates the visibility state and accessible button logic, rather than re-implementing it in every form.
