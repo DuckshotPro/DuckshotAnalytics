@@ -27,7 +27,7 @@ describe("utils", () => {
   });
 
   describe("getGrowthColor", () => {
-    it("returns green for positive growth", () => {
+    it("returns green for non-negative growth", () => {
       expect(getGrowthColor(10)).toBe("text-green-500");
       expect(getGrowthColor(0)).toBe("text-green-500");
     });
