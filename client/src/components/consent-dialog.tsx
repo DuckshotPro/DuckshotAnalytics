@@ -289,7 +289,6 @@ export function ConsentDialog({ isOpen, onClose, onConsent }: ConsentDialogProps
           </Button>
           <Button 
             onClick={handleAccept}
-            disabled={saveConsentMutation.isPending}
             isLoading={saveConsentMutation.isPending}
             className="gap-1"
           >
