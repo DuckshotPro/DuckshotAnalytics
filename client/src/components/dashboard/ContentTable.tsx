@@ -43,9 +43,9 @@ export function ContentTable({ items }: ContentTableProps) {
           <div className="bg-muted/50 p-4 rounded-full mb-3">
             <Camera className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
           </div>
-          <h3 className="text-lg font-medium text-foreground">No content data yet</h3>
-          <p className="text-muted-foreground text-sm max-w-sm mt-1">
-            Start posting content on Snapchat to see your performance metrics appear here.
+          <h4 className="text-lg font-medium text-foreground mb-1">No content found</h4>
+          <p className="text-sm text-muted-foreground max-w-xs">
+            Start posting stories on Snapchat to see your performance metrics here.
           </p>
         </div>
       ) : (
@@ -75,7 +75,10 @@ export function ContentTable({ items }: ContentTableProps) {
                   <TableCell className="text-sm">{formatNumber(item.views)}</TableCell>
                   <TableCell>
                     <div className="space-y-1 w-[100px]">
-                      <Progress value={item.completion} className="h-2 bg-muted" indicatorClassName="bg-primary" />
+                      <Progress
+                        value={item.completion}
+                        className="h-2 bg-muted"
+                      />
                       <span className="text-xs text-muted-foreground">{item.completion}%</span>
                     </div>
                   </TableCell>
