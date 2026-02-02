@@ -33,7 +33,7 @@ export function ContentTable({ items }: ContentTableProps) {
         <Button
           variant="ghost"
           disabled={items.length === 0}
-          className="text-primary text-sm font-medium flex items-center p-0 h-auto hover:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-primary text-sm font-medium flex items-center p-0 h-auto hover:bg-transparent"
         >
           <span>See all</span>
           <ChevronRight className="ml-1 h-4 w-4" />
