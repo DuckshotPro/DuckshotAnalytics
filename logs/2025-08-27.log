@@ -1,9 +1,0 @@
-[2025-08-27 20:42:26.356] [INFO] Application starting up {"environment":"development","nodeVersion":"v22.16.0"}
-[2025-08-27 20:42:26.436] [INFO] Server started successfully {"port":5000,"host":"0.0.0.0"}
-[2025-08-27 20:43:46.159] [INFO] Application starting up {"environment":"development","nodeVersion":"v22.16.0"}
-[2025-08-27 20:43:46.228] [INFO] Server started successfully {"port":5000,"host":"0.0.0.0"}
-[2025-08-27 20:51:39.473] [INFO] Application starting up {"environment":"development","nodeVersion":"v22.16.0"}
-[2025-08-27 20:51:39.541] [INFO] Server started successfully {"port":5000,"host":"0.0.0.0"}
-[2025-08-27 21:07:26.273] [INFO] Application starting up {"environment":"development","nodeVersion":"v22.16.0"}
-[2025-08-27 21:07:26.352] [INFO] Server started successfully {"port":5000,"host":"0.0.0.0"}
-[2025-08-27 21:07:33.437] [ERROR] HTTP 503 {"method":"GET","url":"/api/health","ip":"127.0.0.1","statusCode":503,"userAgent":"curl/8.12.1","duration":"35ms"}
