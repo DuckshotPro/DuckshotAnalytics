@@ -14,6 +14,6 @@
 **Learning:** Radix UI's `Slot` component (used via `asChild`) is strictly single-child. Conditional rendering patterns like `{condition && <Icon />}` or `{condition ? <><Icon />{children}</> : children}` must be carefully structured. Specifically, simple short-circuiting `{condition && <A />}{children}` can return an array `[false, children]`, causing `React.Children.only` to crash.
 **Action:** When using `asChild`, ensure conditional children are wrapped or structured so that exactly one React Element is returned to the Slot.
 
-## 2026-01-22 - Autocomplete Attributes
-**Learning:** Adding proper `autocomplete` attributes (`username`, `current-password`, `new-password`) significantly improves the login/registration UX by enabling browser and password manager autofill, which is a high-value, low-effort improvement.
-**Action:** Audit all authentication forms for missing or incorrect `autocomplete` attributes.
+## 2026-05-22 - Trend Indicators & Screen Readers
+**Learning:** Visual trend indicators (arrows + color) are insufficient for screen readers. `StatCard` displayed percentage change without indicating "increase" or "decrease" in text.
+**Action:** Always append `sr-only` text (e.g., "Increased by") to trend indicators and hide decorative icons with `aria-hidden="true"`.
