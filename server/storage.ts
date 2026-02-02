@@ -23,7 +23,7 @@ import {
   InsertJobExecutionLog,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 
@@ -269,8 +269,8 @@ export class DatabaseStorage implements IStorage {
     apiKey: string, 
     consentData?: {
       dataConsent?: boolean;
-      consentDate?: string;
-      privacyPolicyVersion?: string;
+      consentDate?: Date | null;
+      privacyPolicyVersion?: string | null;
     }
   ): Promise<User> {
     const updateData: any = {
@@ -460,7 +460,7 @@ export class DatabaseStorage implements IStorage {
         and(
           eq(snapchatData.userId, userId),
           // Use SQL comparison for date
-          db.sql`${snapchatData.fetchedAt} < ${cutoffDate}`
+          sql`${snapchatData.fetchedAt} < ${cutoffDate}`
         )
       );
 
@@ -469,7 +469,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(aiInsights.userId, userId),
-          db.sql`${aiInsights.createdAt} < ${cutoffDate}`
+          sql`${aiInsights.createdAt} < ${cutoffDate}`
         )
       );
 

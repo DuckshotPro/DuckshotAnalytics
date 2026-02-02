@@ -76,11 +76,12 @@ export const pushToAgentWorker = async (jobName: string, data: any) => {
 // Initialize queues
 async function initializeQueues() {
   const redisAvailable = await initializeRedis();
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   
   if (redisAvailable && redis) {
-    dataFetchQueue = new Bull('data-fetch', process.env.REDIS_URL);
-    reportGenerationQueue = new Bull('report-generation', process.env.REDIS_URL);
-    dataCleanupQueue = new Bull('data-cleanup', process.env.REDIS_URL);
+    dataFetchQueue = new Bull('data-fetch', redisUrl);
+    reportGenerationQueue = new Bull('report-generation', redisUrl);
+    dataCleanupQueue = new Bull('data-cleanup', redisUrl);
   } else {
     dataFetchQueue = new DevelopmentQueue('data-fetch');
     reportGenerationQueue = new DevelopmentQueue('report-generation');

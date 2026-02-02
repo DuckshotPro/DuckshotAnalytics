@@ -11,4 +11,20 @@ export interface SnapchatData {
   followers: any[];
   demographics: any[];
   content: any[];
+  totalViews: number;
+  growthRate: number;
+  engagementHistory: {
+    date: string;
+    views: number;
+    likes: number;
+    comments: number;
+    shares: number;
+  }[];
+  topContent: {
+    title: string;
+    views: number;
+    engagementRate: number;
+    date: string;
+    type: string;
+  }[];
 }
