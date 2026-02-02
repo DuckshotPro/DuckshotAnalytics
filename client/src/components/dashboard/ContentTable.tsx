@@ -30,10 +30,12 @@ export function ContentTable({ items }: ContentTableProps) {
     <div className="snap-card p-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-bold text-foreground">Content Performance</h3>
-        <Button variant="ghost" className="text-primary text-sm font-medium flex items-center p-0 h-auto hover:bg-transparent">
-          <span>See all</span>
-          <ChevronRight className="ml-1 h-4 w-4" />
-        </Button>
+        {items.length > 0 && (
+          <Button variant="ghost" className="text-primary text-sm font-medium flex items-center p-0 h-auto hover:bg-transparent">
+            <span>See all</span>
+            <ChevronRight className="ml-1 h-4 w-4" />
+          </Button>
+        )}
       </div>
       
       {items.length === 0 ? (
