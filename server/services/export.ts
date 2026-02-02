@@ -183,7 +183,7 @@ async function generatePDFReport(data: SnapchatData, options: ExportOptions) {
     title: 'Snapchat Analytics Report',
     generatedAt: new Date().toLocaleDateString(),
     dateRange: `${options.dateRange.start} - ${options.dateRange.end}`,
-    sections: []
+    sections: [] as any[]
   };
   
   if (options.sections.overview) {

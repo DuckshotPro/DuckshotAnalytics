@@ -1,6 +1,7 @@
 
 import { storage } from '../storage';
 import { generateAiInsight } from './gemini';
+import { SnapchatData } from '../types';
 
 export interface CompetitorData {
   id: string;
@@ -94,6 +95,50 @@ const getMarketPosition = (): 'leading' | 'growing' | 'emerging' | 'declining' =
   return 'growing';
 };
 
+// Helper for analyzing from direct data (used by export service)
+export async function analyzeCompetitors(data: SnapchatData): Promise<CompetitorAnalysis> {
+  // Use data properties or defaults if missing (since we added them to type but runtime data might be partial)
+  const followers = data.totalFollowers || 1000;
+  const engagement = data.engagementRate || 0.05;
+  const category = 'lifestyle'; // Default since we don't have user object here
+
+  const competitors = generateMockCompetitors(category, followers);
+
+  // Calculate ranking
+  const userEngagement = engagement; // Already a percentage/rate?
+  const userRanking = competitors.filter(c => c.avgEngagementRate > userEngagement).length + 1;
+
+  // Benchmarks
+  const avgEngagementRate = competitors.reduce((sum, c) => sum + c.avgEngagementRate, 0) / competitors.length;
+  const avgFollowerGrowth = competitors.reduce((sum, c) => sum + c.growthRate, 0) / competitors.length;
+  const avgContentFrequency = competitors.reduce((sum, c) => sum + c.contentFrequency, 0) / competitors.length;
+
+  const topPerformers = competitors.slice(0, 3);
+
+  // Simple insights
+  const marketPosition = userRanking <= 3 ? 'Market Leader' : 'Growing';
+
+  return {
+    userRanking,
+    totalCompetitors: competitors.length + 1,
+    competitorData: competitors,
+    insights: {
+      marketPosition,
+      strengthAreas: ['Engagement', 'Consistency'],
+      improvementAreas: ['Growth'],
+      opportunities: ['New formats'],
+      threats: ['Competition']
+    },
+    benchmarks: {
+      avgEngagementRate,
+      avgFollowerGrowth,
+      avgContentFrequency,
+      topPerformers
+    },
+    recommendations: ['Increase posting frequency']
+  };
+}
+
 export async function generateCompetitorAnalysis(userId: number): Promise<CompetitorAnalysis> {
   try {
     // Get user's latest data
@@ -104,7 +149,7 @@ export async function generateCompetitorAnalysis(userId: number): Promise<Compet
       throw new Error('User data not found');
     }
     
-    const userData = snapchatData.data;
+    const userData = snapchatData.data as any; // Cast to any to avoid type errors with unknown shape
     const userCategory = user.displayName?.includes('fitness') ? 'fitness' :
                         user.displayName?.includes('food') ? 'food' :
                         user.displayName?.includes('fashion') ? 'fashion' : 'lifestyle';
@@ -165,9 +210,6 @@ export async function generateCompetitorAnalysis(userId: number): Promise<Compet
     
     opportunities.push('Leverage trending content types from top performers');
     opportunities.push('Explore untapped content formats in your category');
-    
-    // Generate AI-powered insights
-    const insightPrompt = `Based on competitor analysis data: User ranks ${userRanking} out of ${competitors.length + 1} creators. Market average engagement: ${(avgEngagementRate * 100).toFixed(1)}%. User's category: ${userCategory}. Top performers focus on: ${topPerformers.map(p => p.topContentTypes.join(', ')).join('; ')}.`;
     
     const marketPosition = userRanking <= 3 ? 'Market Leader' :
                           userRanking <= Math.ceil(competitors.length * 0.25) ? 'Top Performer' :

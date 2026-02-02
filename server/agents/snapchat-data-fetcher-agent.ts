@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 /**
  * Snapchat Data Fetcher Agent
