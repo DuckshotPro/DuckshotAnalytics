@@ -135,7 +135,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Username</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your username" {...field} />
+                            <Input placeholder="Enter your username" autoComplete="username" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -154,6 +154,7 @@ export default function AuthPage() {
                                 type={showLoginPassword ? "text" : "password"}
                                 placeholder="Enter your password"
                                 className="pr-10"
+                                autoComplete="current-password"
                                 {...field}
                               />
                             </FormControl>
@@ -192,7 +193,7 @@ export default function AuthPage() {
                 {showEmailSent ? (
                   <div className="space-y-4 text-center py-8">
                     <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
@@ -205,6 +206,7 @@ export default function AuthPage() {
                       <p className="text-sm text-gray-500">
                         Didn't receive the email? Check your spam folder or{' '}
                         <button
+                          type="button"
                           onClick={() => setActiveTab('login')}
                           className="text-primary hover:underline"
                         >
@@ -224,7 +226,7 @@ export default function AuthPage() {
                           <FormItem>
                             <FormLabel>Username</FormLabel>
                             <FormControl>
-                              <Input placeholder="Choose a username" {...field} />
+                              <Input placeholder="Choose a username" autoComplete="username" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -243,6 +245,7 @@ export default function AuthPage() {
                                   type={showRegisterPassword ? "text" : "password"}
                                   placeholder="Create a password"
                                   className="pr-10"
+                                  autoComplete="new-password"
                                   {...field}
                                 />
                               </FormControl>
