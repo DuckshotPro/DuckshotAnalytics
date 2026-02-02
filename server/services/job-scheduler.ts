@@ -32,13 +32,13 @@ async function initializeRedis() {
         return Math.min(times * 50, 2000);
       },
     });
-    
+
     // Test the connection with timeout
     await Promise.race([
       redis.ping(),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Redis connection timeout')), 10000))
     ]);
-    
+
     useRedis = true;
     console.log('✅ Redis connected successfully');
     return true;
@@ -76,11 +76,12 @@ export const pushToAgentWorker = async (jobName: string, data: any) => {
 // Initialize queues
 async function initializeQueues() {
   const redisAvailable = await initializeRedis();
-  
+
   if (redisAvailable && redis) {
-    dataFetchQueue = new Bull('data-fetch', process.env.REDIS_URL);
-    reportGenerationQueue = new Bull('report-generation', process.env.REDIS_URL);
-    dataCleanupQueue = new Bull('data-cleanup', process.env.REDIS_URL);
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    dataFetchQueue = new Bull('data-fetch', redisUrl);
+    reportGenerationQueue = new Bull('report-generation', redisUrl);
+    dataCleanupQueue = new Bull('data-cleanup', redisUrl);
   } else {
     dataFetchQueue = new DevelopmentQueue('data-fetch');
     reportGenerationQueue = new DevelopmentQueue('report-generation');
@@ -101,12 +102,12 @@ class SnapchatETLScheduler implements JobScheduler {
 
   async start(): Promise<void> {
     if (this.isRunning) return;
-    
+
     console.log('🚀 Starting ETL Pipeline and Job Scheduler...');
-    
+
     // Initialize queues first
     await initializeQueues();
-    
+
     // 1. Data fetch jobs - every 15 minutes for premium, 24 hours for free
     const premiumDataFetch = cron.schedule('*/15 * * * *', async () => {
       await this.schedulePremiumDataFetch();
@@ -138,24 +139,39 @@ class SnapchatETLScheduler implements JobScheduler {
     dataCleanup.start();
     queueRecovery.start();
 
-    this.tasks = [premiumDataFetch, freeDataFetch, weeklyReports, dataCleanup, queueRecovery];
+    // 5. Snapchat Scheduler jobs
+    const { startSnapchatPublisherJob } = await import('../jobs/snapchat-publisher-job');
+    const { startStorageCleanupJob } = await import('../jobs/storage-cleanup-job');
+
+    const publisherJob = startSnapchatPublisherJob();
+    const storageCleanupJob = startStorageCleanupJob();
+
+    this.tasks = [
+      premiumDataFetch,
+      freeDataFetch,
+      weeklyReports,
+      dataCleanup,
+      queueRecovery,
+      publisherJob as any,
+      storageCleanupJob as any
+    ];
     this.isRunning = true;
 
     // Setup queue processors
     this.setupQueueProcessors();
-    
+
     console.log('✅ ETL Pipeline and Job Scheduler started successfully');
   }
 
   stop(): void {
     if (!this.isRunning) return;
-    
+
     console.log('🛑 Stopping ETL Pipeline and Job Scheduler...');
-    
+
     this.tasks.forEach(task => task.stop());
     this.tasks = [];
     this.isRunning = false;
-    
+
     console.log('✅ ETL Pipeline and Job Scheduler stopped');
   }
 
@@ -187,16 +203,16 @@ class SnapchatETLScheduler implements JobScheduler {
     try {
       const users = await storage.getAllUsers();
       const premiumUsers = users.filter(u => u.subscription === 'premium');
-      
+
       for (const user of premiumUsers) {
         if (user.snapchatClientId && user.snapchatApiKey && dataFetchQueue) {
-          await dataFetchQueue.add('fetch-user-data', { 
-            userId: user.id, 
-            userType: 'premium' 
+          await dataFetchQueue.add('fetch-user-data', {
+            userId: user.id,
+            userType: 'premium'
           });
         }
       }
-      
+
       console.log(`📈 Scheduled data fetch for ${premiumUsers.length} premium users`);
     } catch (error) {
       console.error('Error scheduling premium data fetch:', error);
@@ -207,16 +223,16 @@ class SnapchatETLScheduler implements JobScheduler {
     try {
       const users = await storage.getAllUsers();
       const freeUsers = users.filter(u => u.subscription === 'free');
-      
+
       for (const user of freeUsers) {
         if (user.snapchatClientId && user.snapchatApiKey && dataFetchQueue) {
-          await dataFetchQueue.add('fetch-user-data', { 
-            userId: user.id, 
-            userType: 'free' 
+          await dataFetchQueue.add('fetch-user-data', {
+            userId: user.id,
+            userType: 'free'
           });
         }
       }
-      
+
       console.log(`📊 Scheduled data fetch for ${freeUsers.length} free users`);
     } catch (error) {
       console.error('Error scheduling free data fetch:', error);
@@ -249,7 +265,7 @@ class SnapchatETLScheduler implements JobScheduler {
     try {
       // Retry failed jobs from all queues
       const queues = [dataFetchQueue, reportGenerationQueue, dataCleanupQueue];
-      
+
       for (const queue of queues) {
         const failedJobs = await queue.getFailed();
         for (const job of failedJobs) {
@@ -275,7 +291,7 @@ class SnapchatETLScheduler implements JobScheduler {
     // Data fetch processor
     dataFetchQueue.process('fetch-user-data', async (job) => {
       const { userId, userType, immediate } = job.data;
-      
+
       try {
         const user = await storage.getUser(userId);
         if (!user || !user.snapchatClientId || !user.snapchatApiKey) {
@@ -283,12 +299,12 @@ class SnapchatETLScheduler implements JobScheduler {
         }
 
         console.log(`🔄 Fetching Snapchat data for user ${userId} (${userType})`);
-        
+
         const snapchatData = await fetchSnapchatData(user.snapchatClientId, user.snapchatApiKey);
         await storage.saveSnapchatData(userId, snapchatData);
-        
+
         console.log(`✅ Successfully fetched data for user ${userId}`);
-        
+
         // Update job tracking
         await storage.logJobExecution({
           userId,
@@ -297,10 +313,10 @@ class SnapchatETLScheduler implements JobScheduler {
           executedAt: new Date(),
           metadata: { userType, immediate }
         });
-        
+
       } catch (error) {
         console.error(`❌ Error fetching data for user ${userId}:`, error);
-        
+
         await storage.logJobExecution({
           userId,
           jobType: 'data-fetch',
@@ -309,7 +325,7 @@ class SnapchatETLScheduler implements JobScheduler {
           error: error instanceof Error ? error.message : 'Unknown error',
           metadata: { userType, immediate }
         });
-        
+
         throw error;
       }
     });
@@ -320,23 +336,23 @@ class SnapchatETLScheduler implements JobScheduler {
         console.log('📧 Generating weekly reports...');
         await generateWeeklyReports();
         console.log('✅ Weekly reports generated successfully');
-        
+
         await storage.logJobExecution({
           jobType: 'weekly-reports',
           status: 'completed',
           executedAt: new Date()
         });
-        
+
       } catch (error) {
         console.error('❌ Error generating weekly reports:', error);
-        
+
         await storage.logJobExecution({
           jobType: 'weekly-reports',
           status: 'failed',
           executedAt: new Date(),
           error: error instanceof Error ? error.message : 'Unknown error'
         });
-        
+
         throw error;
       }
     });
@@ -345,38 +361,38 @@ class SnapchatETLScheduler implements JobScheduler {
     dataCleanupQueue.process('cleanup-old-data', async (job) => {
       try {
         console.log('🧹 Starting data cleanup...');
-        
+
         const users = await storage.getAllUsers();
         let totalCleaned = 0;
-        
+
         for (const user of users) {
           const retentionDays = user.subscription === 'premium' ? 90 : 30;
           const cutoffDate = new Date();
           cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
-          
+
           const cleaned = await storage.cleanupOldData(user.id, cutoffDate);
           totalCleaned += cleaned;
         }
-        
+
         console.log(`✅ Data cleanup completed. Cleaned ${totalCleaned} old records`);
-        
+
         await storage.logJobExecution({
           jobType: 'data-cleanup',
           status: 'completed',
           executedAt: new Date(),
           metadata: { recordsCleaned: totalCleaned }
         });
-        
+
       } catch (error) {
         console.error('❌ Error during data cleanup:', error);
-        
+
         await storage.logJobExecution({
           jobType: 'data-cleanup',
           status: 'failed',
           executedAt: new Date(),
           error: error instanceof Error ? error.message : 'Unknown error'
         });
-        
+
         throw error;
       }
     });

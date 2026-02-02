@@ -43,42 +43,48 @@ export function MobileMenu({ isOpen, onClose, isPremium, username }: MobileMenuP
               <PremiumBadge isPremium={isPremium} className="mt-1" />
             </div>
           </div>
-          
+
           <SheetClose asChild>
             <Link href="/dashboard" className="block p-2 hover:bg-muted rounded-md transition-colors">
               Dashboard
             </Link>
           </SheetClose>
-          
+
           <SheetClose asChild>
             <Link href="/reports" className="block p-2 hover:bg-muted rounded-md transition-colors">
               Reports
             </Link>
           </SheetClose>
-          
+
+          <SheetClose asChild>
+            <Link href="/snapchat/scheduler" className="block p-2 hover:bg-muted rounded-md transition-colors">
+              Scheduler
+            </Link>
+          </SheetClose>
+
           <SheetClose asChild>
             <Link href="/settings" className="block p-2 hover:bg-muted rounded-md transition-colors">
               Settings
             </Link>
           </SheetClose>
-          
+
           {/* Fix broken route: /help -> /help-page to match defined router path */}
           <SheetClose asChild>
             <Link href="/help-page" className="block p-2 hover:bg-muted rounded-md transition-colors">
               Help
             </Link>
           </SheetClose>
-          
+
           <SheetClose asChild>
             <Link href="/data-management" className="block p-2 hover:bg-muted rounded-md transition-colors">
               Data Privacy
             </Link>
           </SheetClose>
-          
+
           <div className="pt-4 mt-4 border-t">
             <SheetClose asChild>
-              <button 
-                onClick={handleLogout} 
+              <button
+                onClick={handleLogout}
                 className="block w-full text-left p-2 text-destructive hover:bg-destructive/10 rounded-md transition-colors"
                 disabled={logoutMutation.isPending}
               >

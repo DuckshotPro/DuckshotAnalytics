@@ -302,3 +302,8 @@ export const insertVerificationTokenSchema = createInsertSchema(verificationToke
 
 export type VerificationToken = typeof verificationTokens.$inferSelect;
 export type InsertVerificationToken = z.infer<typeof insertVerificationTokenSchema>;
+
+// ===================================
+// Snapchat Scheduler Schema Exports
+// ===================================
+export * from "./snapchat-scheduler-schema";

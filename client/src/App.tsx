@@ -31,6 +31,7 @@ import PrivacyPolicyPage from "@/pages/privacy-policy";
 import ContactPage from "@/pages/contact-page";
 import RoadmapPage from "@/pages/roadmap-page";
 import VerifyEmailPage from "@/pages/verify-email";
+import SnapchatScheduler from "@/pages/SnapchatScheduler";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 
@@ -73,6 +74,7 @@ function Router() {
         <ProtectedRoute path="/snapchat-prerequisites" component={SnapchatPrerequisites} />
         <ProtectedRoute path="/settings" component={SettingsPage} />
         <ProtectedRoute path="/reports" component={ReportsPage} />
+        <ProtectedRoute path="/snapchat/scheduler" component={SnapchatScheduler} />
         <ProtectedRoute path="/data-management" component={React.lazy(() => import("@/pages/data-management"))} />
         <ProtectedRoute path="/admin" component={React.lazy(() => import("@/pages/admin/AdminDashboard"))} />
 
