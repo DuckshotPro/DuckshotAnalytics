@@ -104,7 +104,7 @@ export async function generateCompetitorAnalysis(userId: number): Promise<Compet
       throw new Error('User data not found');
     }
     
-    const userData = snapchatData.data;
+    const userData = snapchatData.data as any;
     const userCategory = user.displayName?.includes('fitness') ? 'fitness' :
                         user.displayName?.includes('food') ? 'food' :
                         user.displayName?.includes('fashion') ? 'fashion' : 'lifestyle';

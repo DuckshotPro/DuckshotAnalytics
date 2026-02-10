@@ -32,6 +32,13 @@ export interface ServiceHealth {
   error?: string;
 }
 
+interface JobLog {
+  jobType: string;
+  status: 'active' | 'completed' | 'failed';
+  executedAt: Date;
+  error?: string;
+}
+
 export class HealthMonitor {
   private static instance: HealthMonitor;
   private healthCache: HealthStatus | null = null;
@@ -165,7 +172,7 @@ export class HealthMonitor {
     }
   }
 
-  private async checkBackgroundJobs(): ServiceHealth {
+  private async checkBackgroundJobs(): Promise<ServiceHealth> {
     try {
       // Check recent job execution logs
       const recentJobs = await this.getRecentJobLogs();
@@ -220,13 +227,13 @@ export class HealthMonitor {
     }
   }
 
-  private async getRecentJobLogs() {
+  private async getRecentJobLogs(): Promise<JobLog[]> {
     try {
       // This would need to be implemented in storage to get recent job logs
-      // For now, return empty array
-      return [];
+      // For now, return empty array with proper typing
+      return [] as JobLog[];
     } catch (error) {
-      return [];
+      return [] as JobLog[];
     }
   }
 

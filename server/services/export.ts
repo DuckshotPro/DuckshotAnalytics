@@ -1,7 +1,7 @@
 
 import { SnapchatData } from '../types';
 import { generateAudienceSegments } from './audience-segmentation';
-import { analyzeCompetitors } from './competitor-analysis';
+import { generateCompetitorAnalysis } from './competitor-analysis';
 
 export interface ExportOptions {
   format: 'pdf' | 'csv' | 'excel' | 'json';
@@ -35,7 +35,7 @@ export interface ExportResult {
   format: string;
 }
 
-export async function generateReport(data: SnapchatData, options: ExportOptions): Promise<ExportResult> {
+export async function generateReport(data: SnapchatData, userId: number, options: ExportOptions): Promise<ExportResult> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename = `snapchat-analytics-${timestamp}.${options.format}`;
   
@@ -49,10 +49,10 @@ export async function generateReport(data: SnapchatData, options: ExportOptions)
       reportData = await generateExcelReport(data, options);
       break;
     case 'pdf':
-      reportData = await generatePDFReport(data, options);
+      reportData = await generatePDFReport(data, userId, options);
       break;
     case 'json':
-      reportData = await generateJSONReport(data, options);
+      reportData = await generateJSONReport(data, userId, options);
       break;
     default:
       throw new Error(`Unsupported format: ${options.format}`);
@@ -76,16 +76,17 @@ async function generateCSVReport(data: SnapchatData, options: ExportOptions) {
   if (options.sections.overview) {
     rows.push(['Overview']);
     rows.push(['Total Followers', data.totalFollowers]);
-    rows.push(['Total Views', data.totalViews]);
+    rows.push(['Total Views', data.totalStoryViews]);
     rows.push(['Engagement Rate', `${data.engagementRate}%`]);
     rows.push(['']);
   }
   
-  if (options.sections.engagement) {
+  if (options.sections.engagement && data.content.length > 0) {
     rows.push(['Engagement Metrics']);
     rows.push(['Date', 'Views', 'Likes', 'Comments', 'Shares']);
-    data.engagementHistory.forEach(entry => {
-      rows.push([entry.date, entry.views, entry.likes, entry.comments, entry.shares]);
+    // Use content data as engagement history fallback
+    data.content.forEach((entry: any) => {
+      rows.push([entry.date || 'N/A', entry.views || 0, entry.likes || 0, entry.comments || 0, entry.shares || 0]);
     });
     rows.push(['']);
   }
@@ -93,7 +94,7 @@ async function generateCSVReport(data: SnapchatData, options: ExportOptions) {
   if (options.sections.content) {
     rows.push(['Top Content']);
     rows.push(['Title', 'Views', 'Engagement Rate', 'Date']);
-    data.topContent.forEach(content => {
+    data.content.forEach((content: any) => {
       rows.push([content.title, content.views, `${content.engagementRate}%`, content.date]);
     });
     rows.push(['']);
@@ -121,9 +122,9 @@ async function generateExcelReport(data: SnapchatData, options: ExportOptions) {
       data: [
         ['Metric', 'Value'],
         ['Total Followers', data.totalFollowers],
-        ['Total Views', data.totalViews],
+        ['Total Views', data.totalStoryViews],
         ['Engagement Rate', `${data.engagementRate}%`],
-        ['Average Daily Views', Math.round(data.totalViews / 30)]
+        ['Average Daily Views', Math.round(data.totalStoryViews / 30)]
       ]
     };
   }
@@ -132,13 +133,13 @@ async function generateExcelReport(data: SnapchatData, options: ExportOptions) {
     workbook.sheets['Engagement'] = {
       data: [
         ['Date', 'Views', 'Likes', 'Comments', 'Shares', 'Engagement Rate'],
-        ...data.engagementHistory.map(entry => [
-          entry.date,
-          entry.views,
-          entry.likes,
-          entry.comments,
-          entry.shares,
-          `${((entry.likes + entry.comments + entry.shares) / entry.views * 100).toFixed(2)}%`
+        ...data.content.map((entry: any) => [
+          entry.date || 'N/A',
+          entry.views || 0,
+          entry.likes || 0,
+          entry.comments || 0,
+          entry.shares || 0,
+          `${(((entry.likes || 0) + (entry.comments || 0) + (entry.shares || 0)) / (entry.views || 1) * 100).toFixed(2)}%`
         ])
       ]
     };
@@ -148,12 +149,12 @@ async function generateExcelReport(data: SnapchatData, options: ExportOptions) {
     workbook.sheets['Top Content'] = {
       data: [
         ['Title', 'Views', 'Engagement Rate', 'Date', 'Type'],
-        ...data.topContent.map(content => [
-          content.title,
-          content.views,
-          `${content.engagementRate}%`,
-          content.date,
-          content.type
+        ...data.content.map((content: any) => [
+          content.title || 'Untitled',
+          content.views || 0,
+          `${content.engagementRate || 0}%`,
+          content.date || 'N/A',
+          content.type || 'Story'
         ])
       ]
     };
@@ -178,12 +179,12 @@ async function generateExcelReport(data: SnapchatData, options: ExportOptions) {
   return workbook;
 }
 
-async function generatePDFReport(data: SnapchatData, options: ExportOptions) {
+async function generatePDFReport(data: SnapchatData, userId: number, options: ExportOptions) {
   const reportData = {
     title: 'Snapchat Analytics Report',
     generatedAt: new Date().toLocaleDateString(),
     dateRange: `${options.dateRange.start} - ${options.dateRange.end}`,
-    sections: []
+    sections: [] as any[]
   };
   
   if (options.sections.overview) {
@@ -192,9 +193,9 @@ async function generatePDFReport(data: SnapchatData, options: ExportOptions) {
       type: 'overview',
       data: {
         totalFollowers: data.totalFollowers,
-        totalViews: data.totalViews,
+        totalViews: data.totalStoryViews,
         engagementRate: data.engagementRate,
-        growthRate: data.growthRate
+        growthRate: data.followerGrowth
       }
     });
   }
@@ -203,7 +204,7 @@ async function generatePDFReport(data: SnapchatData, options: ExportOptions) {
     reportData.sections.push({
       title: 'Engagement Trends',
       type: 'chart',
-      data: data.engagementHistory
+      data: data.content
     });
   }
   
@@ -211,7 +212,7 @@ async function generatePDFReport(data: SnapchatData, options: ExportOptions) {
     reportData.sections.push({
       title: 'Top Performing Content',
       type: 'table',
-      data: data.topContent
+      data: data.content
     });
   }
   
@@ -225,7 +226,7 @@ async function generatePDFReport(data: SnapchatData, options: ExportOptions) {
   }
   
   if (options.sections.competitors) {
-    const competitorData = await analyzeCompetitors(data);
+    const competitorData = await generateCompetitorAnalysis(userId);
     reportData.sections.push({
       title: 'Competitive Analysis',
       type: 'competitors',
@@ -236,7 +237,7 @@ async function generatePDFReport(data: SnapchatData, options: ExportOptions) {
   return reportData;
 }
 
-async function generateJSONReport(data: SnapchatData, options: ExportOptions) {
+async function generateJSONReport(data: SnapchatData, userId: number, options: ExportOptions) {
   const report: any = {
     metadata: {
       generatedAt: new Date().toISOString(),
@@ -248,18 +249,18 @@ async function generateJSONReport(data: SnapchatData, options: ExportOptions) {
   if (options.sections.overview) {
     report.overview = {
       totalFollowers: data.totalFollowers,
-      totalViews: data.totalViews,
+      totalViews: data.totalStoryViews,
       engagementRate: data.engagementRate,
-      growthRate: data.growthRate
+      growthRate: data.followerGrowth
     };
   }
   
   if (options.sections.engagement) {
-    report.engagement = data.engagementHistory;
+    report.engagement = data.content;
   }
   
   if (options.sections.content) {
-    report.content = data.topContent;
+    report.content = data.content;
   }
   
   if (options.sections.audience) {
@@ -267,7 +268,7 @@ async function generateJSONReport(data: SnapchatData, options: ExportOptions) {
   }
   
   if (options.sections.competitors) {
-    report.competitors = await analyzeCompetitors(data);
+    report.competitors = await generateCompetitorAnalysis(userId);
   }
   
   return report;

@@ -49,7 +49,7 @@ export default function ConnectAccount() {
       await connectSnapchatMutation.mutateAsync({
         ...pendingCredentials,
         dataConsent: true,
-        consentDate: new Date().toISOString(),
+        consentDate: new Date(),
         privacyPolicyVersion: "1.0" // Current version of our privacy policy
       });
 
@@ -68,7 +68,7 @@ export default function ConnectAccount() {
     }
   };
 
-  const handleDeclineConsent = () => {
+  const handleCloseConsent = () => {
     setPendingCredentials(null);
     setShowConsentDialog(false);
     toast({
@@ -180,11 +180,9 @@ export default function ConnectAccount() {
 
       {/* Consent Dialog */}
       <ConsentDialog
-        open={showConsentDialog}
-        onOpenChange={setShowConsentDialog}
-        onConfirm={handleConfirmConsent}
-        onDecline={handleDeclineConsent}
-        providerName="Snapchat"
+        isOpen={showConsentDialog}
+        onClose={handleCloseConsent}
+        onConsent={handleConfirmConsent}
       />
     </div>
   );

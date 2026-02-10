@@ -12,7 +12,7 @@ import {
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { User, insertUserSchema } from "@shared/schema";
+import { User, insertUserSchema, SnapchatCredentials } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -40,18 +40,6 @@ type AuthContextType = {
   registerMutation: UseMutationResult<User, Error, RegisterData>;
   /** Mutation for connecting a Snapchat account */
   connectSnapchatMutation: UseMutationResult<void, Error, SnapchatCredentials>;
-};
-
-/**
- * Snapchat Credentials Type
- * 
- * Defines the data structure for Snapchat API credentials
- */
-type SnapchatCredentials = {
-  /** Snapchat API client ID */
-  snapchatClientId: string;
-  /** Snapchat API key */
-  snapchatApiKey: string;
 };
 
 /**
