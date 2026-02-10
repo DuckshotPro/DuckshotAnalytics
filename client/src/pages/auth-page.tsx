@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Eye, EyeOff } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -30,8 +30,6 @@ type AuthFormValues = z.infer<typeof authSchema>;
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [showEmailSent, setShowEmailSent] = useState(false);
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const { loginMutation, registerMutation, user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -137,7 +135,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Username</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your username" autoComplete="username" {...field} />
+                            <Input placeholder="Enter your username" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -150,37 +148,14 @@ export default function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input
-                                type={showLoginPassword ? "text" : "password"}
-                                placeholder="Enter your password"
-                                className="pr-10"
-                                autoComplete="current-password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                              onClick={() => setShowLoginPassword(!showLoginPassword)}
-                              aria-label={showLoginPassword ? "Hide password" : "Show password"}
-                            >
-                              {showLoginPassword ? (
-                                <EyeOff className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <Eye className="h-4 w-4 text-muted-foreground" />
-                              )}
-                            </Button>
-                          </div>
+                          <FormControl>
+                            <PasswordInput placeholder="Enter your password" {...field} />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-<<<<<<< HEAD
                     <Button
                       type="submit"
                       className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
@@ -196,7 +171,7 @@ export default function AuthPage() {
                 {showEmailSent ? (
                   <div className="space-y-4 text-center py-8">
                     <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <svg aria-hidden="true" className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
@@ -209,7 +184,6 @@ export default function AuthPage() {
                       <p className="text-sm text-gray-500">
                         Didn't receive the email? Check your spam folder or{' '}
                         <button
-                          type="button"
                           onClick={() => setActiveTab('login')}
                           className="text-primary hover:underline"
                         >
@@ -229,7 +203,7 @@ export default function AuthPage() {
                           <FormItem>
                             <FormLabel>Username</FormLabel>
                             <FormControl>
-                              <Input placeholder="Choose a username" autoComplete="username" {...field} />
+                              <Input placeholder="Choose a username" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -242,37 +216,14 @@ export default function AuthPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Password</FormLabel>
-                            <div className="relative">
-                              <FormControl>
-                                <Input
-                                  type={showRegisterPassword ? "text" : "password"}
-                                  placeholder="Create a password"
-                                  className="pr-10"
-                                  autoComplete="new-password"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                                aria-label={showRegisterPassword ? "Hide password" : "Show password"}
-                              >
-                                {showRegisterPassword ? (
-                                  <EyeOff className="h-4 w-4 text-muted-foreground" />
-                                ) : (
-                                  <Eye className="h-4 w-4 text-muted-foreground" />
-                                )}
-                              </Button>
-                            </div>
+                            <FormControl>
+                              <PasswordInput placeholder="Create a password" {...field} />
+                            </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
 
-<<<<<<< HEAD
                       <Button
                         type="submit"
                         className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
