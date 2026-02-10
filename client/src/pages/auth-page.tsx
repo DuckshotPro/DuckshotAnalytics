@@ -30,6 +30,8 @@ type AuthFormValues = z.infer<typeof authSchema>;
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [showEmailSent, setShowEmailSent] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const { loginMutation, registerMutation, user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -178,6 +180,7 @@ export default function AuthPage() {
                       )}
                     />
 
+<<<<<<< HEAD
                     <Button
                       type="submit"
                       className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
@@ -269,6 +272,7 @@ export default function AuthPage() {
                         )}
                       />
 
+<<<<<<< HEAD
                       <Button
                         type="submit"
                         className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
