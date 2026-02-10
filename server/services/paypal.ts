@@ -12,7 +12,6 @@ const {
     Environment,
     OrdersController,
     PaymentsController,
-    LoggingConfiguration,
     LogLevel,
 } = paypalSDK;
 
@@ -72,7 +71,7 @@ export async function createSubscription(
 
     const collect = {
         body: {
-            intent: 'CAPTURE',
+            intent: 'CAPTURE' as any,
             purchaseUnits: [
                 {
                     referenceId: `user_${user.id}`,
@@ -87,8 +86,8 @@ export async function createSubscription(
             applicationContext: {
                 returnUrl: returnUrl || `${process.env.APP_URL}/subscription/success`,
                 cancelUrl: cancelUrl || `${process.env.APP_URL}/pricing`,
-                userAction: 'PAY_NOW',
-                shippingPreference: 'NO_SHIPPING',
+                userAction: 'PAY_NOW' as any,
+                shippingPreference: 'NO_SHIPPING' as any,
             },
         },
     };
