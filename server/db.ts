@@ -7,10 +7,9 @@
  * The database URL is expected to be provided via the DATABASE_URL environment variable.
  */
 
-import pg from 'pg'; // Import 'pg' as a default export
-const { Pool } = pg; // Destructure Pool from the default export
-import { drizzle } from 'drizzle-orm/node-postgres'; // Change Drizzle import
-// import ws from "ws"; // No longer needed
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from "ws";
 import * as schema from "@shared/schema";
 
 /**
@@ -19,7 +18,7 @@ import * as schema from "@shared/schema";
  * Neon requires a WebSocket constructor for establishing connections.
  * This configuration enables proper connection pooling and handling.
  */
-// neonConfig.webSocketConstructor = ws; // No longer needed
+neonConfig.webSocketConstructor = ws;
 
 /**
  * Validate Database Configuration

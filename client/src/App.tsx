@@ -30,7 +30,6 @@ import TermsPage from "@/pages/terms-page";
 import PrivacyPolicyPage from "@/pages/privacy-policy";
 import ContactPage from "@/pages/contact-page";
 import RoadmapPage from "@/pages/roadmap-page";
-import VerifyEmailPage from "@/pages/verify-email";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 
@@ -64,7 +63,6 @@ function Router() {
         <Route path="/contact-page" component={ContactPage} />
         <Route path="/roadmap-page" component={RoadmapPage} />
         <Route path="/help-page" component={HelpPage} />
-        <Route path="/verify-email/:token" component={VerifyEmailPage} />
 
         {/* Protected Routes (require authentication) */}
         <ProtectedRoute path="/dashboard" component={Dashboard} />

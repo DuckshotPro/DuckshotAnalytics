@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Production Health Monitoring System
  * 
@@ -8,7 +7,6 @@
 
 import { storage } from '../storage';
 import { dataFetchQueue, reportGenerationQueue, dataCleanupQueue } from './job-scheduler';
-import { logger } from '../logger';
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -66,19 +64,19 @@ export class HealthMonitor {
     const timestamp = new Date().toISOString();
     
     // Check all services in parallel
-    const results = await Promise.all([
-      this.checkDatabase().catch(e => { logger.error("Health check - checkDatabase failed:", e); return { status: 'down', lastCheck: new Date().toISOString(), error: e.message } as ServiceHealth; }),
-      this.checkETLPipeline().catch(e => { logger.error("Health check - checkETLPipeline failed:", e); return { status: 'down', lastCheck: new Date().toISOString(), error: e.message } as ServiceHealth; }),
-      this.checkJobQueues().catch(e => { logger.error("Health check - checkJobQueues failed:", e); return { status: 'down', lastCheck: new Date().toISOString(), error: e.message } as ServiceHealth; }),
-      this.checkBackgroundJobs().catch(e => { logger.error("Health check - checkBackgroundJobs failed:", e); return { status: 'down', lastCheck: new Date().toISOString(), error: e.message } as ServiceHealth; }),
-      this.getSystemMetrics().catch(e => { logger.error("Health check - getSystemMetrics failed:", e); return { totalUsers: 0, activeJobs: 0, failedJobs: 0, lastDataSync: null, error: e.message }; })
+    const [
+      databaseHealth,
+      etlHealth,
+      queueHealth,
+      jobHealth,
+      metrics
+    ] = await Promise.all([
+      this.checkDatabase(),
+      this.checkETLPipeline(),
+      this.checkJobQueues(),
+      this.checkBackgroundJobs(),
+      this.getSystemMetrics()
     ]);
-
-    const databaseHealth = results[0] as ServiceHealth;
-    const etlHealth = results[1] as ServiceHealth;
-    const queueHealth = results[2] as ServiceHealth;
-    const jobHealth = results[3] as ServiceHealth;
-    const metrics = results[4] as any;
 
     // Determine overall status
     const services = {

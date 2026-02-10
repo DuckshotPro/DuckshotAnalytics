@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
           <ul className="list-disc pl-6 space-y-2">
             <li>Name and username</li>
             <li>Email address</li>
-            <li>Payment information (processed securely through PayPal)</li>
+            <li>Payment information (processed securely through Stripe)</li>
             <li>Snapchat account information (with your explicit consent)</li>
             <li>Profile information</li>
           </ul>

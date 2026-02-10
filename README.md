@@ -6,22 +6,6 @@ A powerful Snapchat analytics dashboard that transforms complex social media dat
 
 ## 🚀 Features
 
-## Agent-Based System
-
-DuckSnapAnalytics now uses a sophisticated agent-based system to handle data fetching, analysis, and processing. This system is built on the Google Agent Development Kit (ADK) and provides a more robust, scalable, and maintainable architecture.
-
-The agent-based system consists of the following agents:
-
-*   **`OrchestratorAgent`**: Manages the entire data fetching and processing workflow.
-*   **`SnapchatDataFetcherAgent`**: Fetches data from the Snapchat API.
-*   **`DataAnalysisAgent`**: Analyzes Snapchat data and generates insights.
-*   **`TestAgent`**: Validates the data and insights.
-*   **`DatabaseAgent`**: Stores the data and insights in the database.
-*   **`SafetyAgent`**: Screens the data and insights for PII and inappropriate content.
-*   **`EvaluationAgent`**: Evaluates the quality of the generated insights.
-
-This new architecture allows for better separation of concerns, improved error handling, and enhanced scalability.
-
 DuckShots SnapAlytics offers a range of features to help Snapchat creators and marketers optimize their content strategy:
 
 ### Free Tier
@@ -55,7 +39,7 @@ DuckShots SnapAlytics offers a range of features to help Snapchat creators and m
 - **Backend**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: Passport.js with PostgreSQL session store
-- **AI Integration**: Google Gemini for premium insights, Google Agent Development Kit (ADK)
+- **AI Integration**: Google Gemini for premium insights
 - **State Management**: React Context API, TanStack Query
 - **Routing**: Wouter
 
@@ -71,8 +55,8 @@ DuckShots SnapAlytics offers a range of features to help Snapchat creators and m
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/DuckshotPro/DuckSnapAnalytics.git
-   cd DuckSnapAnalytics
+   git clone https://github.com/yourusername/duckshots-snapalytics.git
+   cd duckshots-snapalytics
    ```
 
 2. Install dependencies:
@@ -123,7 +107,7 @@ If OAuth env vars are missing, the app will skip registering the Snapchat OAuth 
 ## 🧩 Project Structure
 
 ```
-DuckSnapAnalytics/
+duckshots-snapalytics/
 ├── client/               # Frontend code
 │   ├── src/
 │   │   ├── components/   # UI components
@@ -244,4 +228,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📬 Contact
 
-For support or questions, please contact support@duckshotanalytics.com
+For support or questions, please contact support@duckshotssnapalytics.com

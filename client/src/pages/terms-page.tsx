@@ -71,7 +71,7 @@ export default function TermsPage() {
             Premium subscriptions are billed monthly or annually, depending on the plan you select. You can cancel your subscription at any time, but we do not provide refunds for partial subscription periods.
           </p>
           <p>
-            We use PayPal as our payment processor. Your payment information is handled securely according to industry standards.
+            We use Stripe as our payment processor. Your payment information is handled securely according to industry standards.
           </p>
         </CardContent>
       </Card>

@@ -9,7 +9,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import logger, { requestLogger } from "./logger";
-import path from "path";
 
 /**
  * Initialize Express Application
@@ -29,9 +28,9 @@ app.use(express.urlencoded({ extended: false }));  // Parse URL-encoded request 
 app.use(requestLogger);
 
 // Log application startup
-logger.info("Application starting up", {
-  environment: app.get("env"),
-  nodeVersion: process.version
+logger.info("Application starting up", { 
+  environment: app.get("env"), 
+  nodeVersion: process.version 
 });
 
 /**
@@ -58,7 +57,7 @@ logger.info("Application starting up", {
   try {
     const { jobScheduler } = await import('./services/job-scheduler');
     await jobScheduler.start();
-
+    
     // Graceful shutdown handling
     const shutdown = () => {
       logger.info('Shutting down server gracefully...');
@@ -68,7 +67,7 @@ logger.info("Application starting up", {
         process.exit(0);
       });
     };
-
+    
     process.on('SIGTERM', shutdown);
     process.on('SIGINT', shutdown);
   } catch (error) {
@@ -111,25 +110,8 @@ logger.info("Application starting up", {
    */
   if (app.get("env") === "development") {
     await setupVite(app, server);
-  } else { // Production mode
-    // Serve static files first for all non-/api paths
-    const distPath = path.resolve(process.cwd(), "dist", "public");
-    app.use((req, res, next) => {
-      if (req.url.startsWith('/api')) {
-        return next(); // Skip static serving for API routes
-      }
-      express.static(distPath)(req, res, next);
-    });
-
-    // Fallback to index.html for any non-API, non-static route
-    app.use((req, res) => {
-      if (req.url.startsWith('/api')) {
-        // If it's an API route and wasn't handled by registerRoutes, it's a 404
-        res.status(404).json({ message: "API endpoint not found" });
-      } else {
-        res.sendFile(path.resolve(distPath, "index.html"));
-      }
-    });
+  } else {
+    serveStatic(app);
   }
 
   /**
@@ -139,7 +121,11 @@ logger.info("Application starting up", {
    * This port serves both the API and the client application.
    */
   const port = 5000;
-  server.listen(port, "0.0.0.0", () => {
+  server.listen({
+    port,
+    host: "0.0.0.0",  // Bind to all network interfaces
+    reusePort: true,  // Allow multiple instances to bind to the same port (useful for clustering)
+  }, () => {
     logger.info(`Server started successfully`, { port, host: "0.0.0.0" });
     log(`serving on port ${port}`);
   });

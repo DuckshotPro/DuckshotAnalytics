@@ -23,20 +23,18 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),            // Username for authentication (must be unique)
   password: text("password").notNull(),                     // Hashed password
   email: text("email"),                                     // User's email address for communications
-  emailVerified: boolean("email_verified").default(false).notNull(), // Whether the user's email has been verified
-  emailVerifiedAt: timestamp("email_verified_at"),          // When the email was verified
   snapchatClientId: text("snapchat_client_id"),             // Snapchat API client ID
   snapchatApiKey: text("snapchat_api_key"),                 // Snapchat API key
   subscription: text("subscription").default("free").notNull(), // Subscription tier ("free" or "premium")
   subscriptionExpiresAt: timestamp("subscription_expires_at"), // When the subscription expires (null for free tier or lifetime)
   profilePictureUrl: text("profile_picture_url"),           // URL to user's profile picture (often from OAuth)
   displayName: text("display_name"),                        // User's display name (often from OAuth)
-
+  
   // Privacy and consent fields
   dataConsent: boolean("data_consent").default(false),      // Whether user has consented to data collection
   consentDate: timestamp("consent_date"),                   // When the user gave consent
   privacyPolicyVersion: text("privacy_policy_version"),     // Version of privacy policy that was accepted
-
+  
   // Data collection preferences
   allowAnalytics: boolean("allow_analytics").default(true),           // Allow collection of analytics data
   allowDemographics: boolean("allow_demographics").default(true),     // Allow collection of demographic data
@@ -44,7 +42,7 @@ export const users = pgTable("users", {
   allowContentAnalysis: boolean("allow_content_analysis").default(true), // Allow analysis of content
   allowThirdPartySharing: boolean("allow_third_party").default(false),  // Allow sharing with third parties
   allowMarketing: boolean("allow_marketing").default(false),            // Allow marketing communications
-
+  
   createdAt: timestamp("created_at").defaultNow().notNull(), // When the user account was created
   updatedAt: timestamp("updated_at").defaultNow().notNull(), // When the user account was last updated
 });
@@ -98,22 +96,6 @@ export const aiInsights = pgTable("ai_insights", {
   userId: integer("user_id").notNull(),            // Foreign key to the users table
   insight: text("insight").notNull(),              // The AI-generated insight text
   createdAt: timestamp("created_at").defaultNow().notNull(), // When the insight was generated
-});
-
-/**
- * Email Verification Tokens Table
- * 
- * Stores temporary tokens for email verification:
- * - Each token is unique and time-limited
- * - Linked to a specific user
- * - Deleted after successful verification or expiration
- */
-export const verificationTokens = pgTable("verification_tokens", {
-  id: serial("id").primaryKey(),                   // Unique identifier for the token
-  userId: integer("user_id").notNull(),            // Foreign key to the users table
-  token: text("token").notNull().unique(),         // Unique verification token
-  expiresAt: timestamp("expires_at").notNull(),    // When the token expires
-  createdAt: timestamp("created_at").defaultNow().notNull(), // When the token was created
 });
 
 /**
@@ -288,17 +270,3 @@ export const insertJobExecutionLogSchema = createInsertSchema(jobExecutionLogs).
 
 export type JobExecutionLog = typeof jobExecutionLogs.$inferSelect;
 export type InsertJobExecutionLog = z.infer<typeof insertJobExecutionLogSchema>;
-
-/**
- * Verification Token Schema
- * 
- * Zod schema for validating verification token data
- */
-export const insertVerificationTokenSchema = createInsertSchema(verificationTokens).pick({
-  userId: true,
-  token: true,
-  expiresAt: true,
-});
-
-export type VerificationToken = typeof verificationTokens.$inferSelect;
-export type InsertVerificationToken = z.infer<typeof insertVerificationTokenSchema>;

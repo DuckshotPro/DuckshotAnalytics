@@ -178,8 +178,3 @@ curl http://your-domain.com/api/health
 The application now includes comprehensive monitoring and alerting systems suitable for production deployment and Snapchat application review. All ETL processes, health checks, and error handling are enterprise-ready.
 
 For any issues or questions during the Snapchat review process, the health endpoints provide real-time system status and detailed diagnostic information.
-
-## Future Considerations
-
-- **Agent-to-Agent (A2A) Communication**: Implement a more formal A2A communication protocol between agents to improve interoperability and scalability.
-- **Model Context Protocol (MCP)**: Utilize a dedicated MCP server to expose the Snapchat API as a tool, making the data fetching process more robust and standardized.

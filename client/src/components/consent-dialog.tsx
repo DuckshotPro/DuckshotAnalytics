@@ -124,7 +124,7 @@ export function ConsentDialog({ isOpen, onClose, onConsent }: ConsentDialogProps
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center text-xl">
-            <Shield className="mr-2 h-5 w-5 text-primary" aria-hidden="true" />
+            <Shield className="mr-2 h-5 w-5 text-primary" />
             Data Collection Consent
           </DialogTitle>
           <DialogDescription>
@@ -134,7 +134,7 @@ export function ConsentDialog({ isOpen, onClose, onConsent }: ConsentDialogProps
         
         <div className="space-y-4 py-2">
           <div className="flex items-start space-x-3 text-sm">
-            <LockKeyhole className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+            <LockKeyhole className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
             <p>
               DuckShots SnapAlytics requires access to certain data from your Snapchat account to provide 
               analytics insights. We take your privacy seriously and want to be transparent about what 
@@ -146,7 +146,7 @@ export function ConsentDialog({ isOpen, onClose, onConsent }: ConsentDialogProps
             <AccordionItem value="item-1" className="border-none">
               <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50">
                 <div className="flex items-center">
-                  <Eye className="mr-2 h-4 w-4" aria-hidden="true" />
+                  <Eye className="mr-2 h-4 w-4" />
                   <span>What data do we collect?</span>
                 </div>
               </AccordionTrigger>
@@ -164,7 +164,7 @@ export function ConsentDialog({ isOpen, onClose, onConsent }: ConsentDialogProps
             <AccordionItem value="item-2" className="border-t">
               <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/50">
                 <div className="flex items-center">
-                  <Info className="mr-2 h-4 w-4" aria-hidden="true" />
+                  <Info className="mr-2 h-4 w-4" />
                   <span>How do we use your data?</span>
                 </div>
               </AccordionTrigger>
@@ -269,7 +269,6 @@ export function ConsentDialog({ isOpen, onClose, onConsent }: ConsentDialogProps
             You can change these preferences at any time in your Data Privacy settings. For more information, 
             please review our{" "}
             <button
-              type="button"
               onClick={handleViewPrivacyPolicy}
               className="text-primary underline underline-offset-2 hover:text-primary/80"
             >
@@ -283,16 +282,15 @@ export function ConsentDialog({ isOpen, onClose, onConsent }: ConsentDialogProps
             variant="outline" 
             onClick={handleDecline}
             disabled={saveConsentMutation.isPending}
-            isLoading={saveConsentMutation.isPending}
           >
             Decline
           </Button>
           <Button 
             onClick={handleAccept}
-            isLoading={saveConsentMutation.isPending}
+            disabled={saveConsentMutation.isPending}
             className="gap-1"
           >
-            I Consent to Data Collection
+            {saveConsentMutation.isPending ? "Saving..." : "I Consent to Data Collection"}
           </Button>
         </DialogFooter>
       </DialogContent>

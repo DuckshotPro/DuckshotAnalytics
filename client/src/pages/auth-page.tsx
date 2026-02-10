@@ -6,19 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 
 const authSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
@@ -29,7 +21,6 @@ type AuthFormValues = z.infer<typeof authSchema>;
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
-  const [showEmailSent, setShowEmailSent] = useState(false);
   const { loginMutation, registerMutation, user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -59,9 +50,9 @@ export default function AuthPage() {
 
   const onLoginSubmit = async (data: AuthFormValues) => {
     try {
-      await loginMutation.mutateAsync({
-        username: data.username,
-        password: data.password
+      await loginMutation.mutateAsync({ 
+        username: data.username, 
+        password: data.password 
       });
       navigate("/dashboard");
     } catch (error) {
@@ -72,17 +63,11 @@ export default function AuthPage() {
 
   const onRegisterSubmit = async (data: AuthFormValues) => {
     try {
-      const result = await registerMutation.mutateAsync({
-        username: data.username,
-        password: data.password
-      }) as any; // Backend may include message field
-
-      // Check if verification email was sent
-      if (result?.message && result.message.includes('check your email')) {
-        setShowEmailSent(true);
-      } else {
-        navigate("/dashboard");
-      }
+      await registerMutation.mutateAsync({ 
+        username: data.username, 
+        password: data.password 
+      });
+      navigate("/dashboard");
     } catch (error) {
       // Error is already handled by the mutation
       console.error(error);
@@ -124,122 +109,87 @@ export default function AuthPage() {
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="register">Register</TabsTrigger>
               </TabsList>
-
-              <TabsContent value="login" forceMount style={{ display: activeTab !== "login" ? 'none' : 'block' }}>
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Username</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter your username" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+              
+              <TabsContent value="login">
+                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="login-username">Username</Label>
+                    <Input
+                      id="login-username"
+                      type="text"
+                      placeholder="Enter your username"
+                      {...loginForm.register("username")}
                     />
-
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <PasswordInput placeholder="Enter your password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                      isLoading={loginMutation.isPending}
-                    >
-                      {loginMutation.isPending ? "Signing in..." : "Sign in"}
-                    </Button>
-                  </form>
-                </Form>
-              </TabsContent>
-
-              <TabsContent value="register" forceMount style={{ display: activeTab !== "register" ? 'none' : 'block' }}>
-                {showEmailSent ? (
-                  <div className="space-y-4 text-center py-8">
-                    <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold mb-2">Check Your Email!</h3>
-                      <p className="text-gray-600 mb-4">
-                        We've sent a verification link to your email address.
-                        Please check your inbox and click the link to verify your account.
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Didn't receive the email? Check your spam folder or{' '}
-                        <button
-                          onClick={() => setActiveTab('login')}
-                          className="text-primary hover:underline"
-                        >
-                          log in
-                        </button>
-                        {' '}to request a new verification email.
-                      </p>
-                    </div>
+                    {loginForm.formState.errors.username && (
+                      <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
+                    )}
                   </div>
-                ) : (
-                  <Form {...registerForm}>
-                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                      <FormField
-                        control={registerForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Choose a username" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={registerForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <PasswordInput placeholder="Create a password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button
-                        type="submit"
-                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                        isLoading={registerMutation.isPending}
-                      >
-                        {registerMutation.isPending ? "Creating account..." : "Create account"}
-                      </Button>
-                    </form>
-                  </Form>
-                )}
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="login-password">Password</Label>
+                    <Input
+                      id="login-password"
+                      type="password"
+                      placeholder="Enter your password"
+                      {...loginForm.register("password")}
+                    />
+                    {loginForm.formState.errors.password && (
+                      <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
+                    )}
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={loginMutation.isPending}
+                  >
+                    {loginMutation.isPending ? "Signing in..." : "Sign in"}
+                  </Button>
+                </form>
+              </TabsContent>
+              
+              <TabsContent value="register">
+                <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="register-username">Username</Label>
+                    <Input
+                      id="register-username"
+                      type="text"
+                      placeholder="Choose a username"
+                      {...registerForm.register("username")}
+                    />
+                    {registerForm.formState.errors.username && (
+                      <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-password">Password</Label>
+                    <Input
+                      id="register-password"
+                      type="password"
+                      placeholder="Create a password"
+                      {...registerForm.register("password")}
+                    />
+                    {registerForm.formState.errors.password && (
+                      <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
+                    )}
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={registerMutation.isPending}
+                  >
+                    {registerMutation.isPending ? "Creating account..." : "Create account"}
+                  </Button>
+                </form>
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
       </div>
-
+      
       {/* Right Column - Hero */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-r from-primary to-yellow-400 p-12 flex-col justify-center">
         <div className="max-w-lg">
@@ -250,7 +200,7 @@ export default function AuthPage() {
           <div className="space-y-6">
             <div className="flex items-start space-x-3">
               <div className="mt-1 bg-white/20 rounded-full p-1">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </div>
@@ -258,7 +208,7 @@ export default function AuthPage() {
             </div>
             <div className="flex items-start space-x-3">
               <div className="mt-1 bg-white/20 rounded-full p-1">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </div>
@@ -266,7 +216,7 @@ export default function AuthPage() {
             </div>
             <div className="flex items-start space-x-3">
               <div className="mt-1 bg-white/20 rounded-full p-1">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </div>

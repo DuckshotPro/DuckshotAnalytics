@@ -14,33 +14,25 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { z } from "zod";
-import {
-  insertUserSchema,
-  insertSnapchatCredentialsSchema,
+import { 
+  insertUserSchema, 
+  insertSnapchatCredentialsSchema, 
   userDataPreferencesSchema,
-  users,
-  verificationTokens,
-  User
+  users, 
+  User 
 } from "@shared/schema";
 // Import required services
-import { fetchSnapchatData } from "./services/snapchat";
-import { generateAiInsight } from "./services/gemini";
-import { generateAutomatedReport } from "./services/automated-reports";
-import { generateAudienceSegments } from "./services/audience-segmentation";
-import { generateCompetitorAnalysis } from "./services/competitor-analysis";
-import paypalService from "./services/paypal";
-import { pushToAgentWorker } from "./services/job-scheduler";
+  import { fetchSnapchatData } from "./services/snapchat";
+  import { generateAiInsight } from "./services/gemini";
+  import { generateAutomatedReport } from "./services/automated-reports";
+  import { generateAudienceSegments } from "./services/audience-segmentation";
+  import { generateCompetitorAnalysis } from "./services/competitor-analysis";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { setupOAuth } from "./oauth";
-import { HealthMonitor, healthMonitor } from './services/health-monitor';
+import { healthMonitor } from './services/health-monitor';
 import { productionAlerts } from './services/production-alerts';
 import logger from "./logger";
-import verificationRoutes from './routes/verification-routes';
-import { sendVerificationEmail } from './services/email-service';
-import crypto from 'crypto';
-import { hashToken } from './utils/token-hash';
-import { registrationLimiter } from './middleware/rate-limit';
 
 const scryptAsync = promisify(scrypt);
 
@@ -107,9 +99,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up OAuth authentication
   setupOAuth(app);
 
-  // Register verification routes
-  app.use('/api/auth', verificationRoutes);
-
   // Authentication middleware
   const isAuthenticated = (req: Request, res: Response, next: Function) => {
     if (req.isAuthenticated()) {
@@ -119,14 +108,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // Authentication routes
-  app.post("/api/auth/signup", registrationLimiter, async (req, res) => {
+  app.post("/api/auth/signup", async (req, res) => {
     try {
       try {
         insertUserSchema.parse(req.body);
       } catch (error) {
         if (error instanceof z.ZodError) {
-          return res.status(400).json({
-            message: `Validation error: ${error.errors.map(e => e.message).join(', ')}`
+          return res.status(400).json({ 
+            message: `Validation error: ${error.errors.map(e => e.message).join(', ')}` 
           });
         }
         return res.status(400).json({ message: "Invalid request data" });
@@ -145,42 +134,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const user = await storage.createUser(userData);
-
-      // Generate verification token
-      if (user.email) {
-        const plainToken = crypto.randomBytes(32).toString('hex');
-        const hashedTokenValue = await hashToken(plainToken);
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-
-        // Store hashed token in database
-        await db.insert(verificationTokens).values({
-          userId: user.id,
-          token: hashedTokenValue,
-          expiresAt,
-        });
-
-        // Send verification email with plain token
-        try {
-          await sendVerificationEmail({
-            to: user.email,
-            username: user.username,
-            verificationToken: plainToken,
-          });
-        } catch (emailError) {
-          console.error('Error sending verification email:', emailError);
-          // Continue with registration even if email fails
-        }
-      }
-
-      // Log in the user after signup
       req.login(user, (err) => {
         if (err) {
           return res.status(500).json({ message: "Error logging in after signup" });
         }
-        return res.status(201).json({
-          ...user,
-          message: user.email ? 'Account created! Please check your email to verify your account.' : 'Account created!'
-        });
+        return res.status(201).json(user);
       });
     } catch (error) {
       res.status(500).json({ message: "Error creating user" });
@@ -227,8 +185,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         insertSnapchatCredentialsSchema.parse(req.body);
       } catch (error) {
         if (error instanceof z.ZodError) {
-          return res.status(400).json({
-            message: `Validation error: ${error.errors.map(e => e.message).join(', ')}`
+          return res.status(400).json({ 
+            message: `Validation error: ${error.errors.map(e => e.message).join(', ')}` 
           });
         }
         return res.status(400).json({ message: "Invalid request data" });
@@ -245,8 +203,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Update user with API credentials and consent data
       await storage.updateUserSnapchatCredentials(
-        user.id,
-        req.body.snapchatClientId,
+        user.id, 
+        req.body.snapchatClientId, 
         req.body.snapchatApiKey,
         consentData
       );
@@ -271,9 +229,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Still connect even if initial data fetch fails
       }
 
-      res.json({
-        message: "Snapchat account connected successfully",
-        dataConsent: consentData.dataConsent
+      res.json({ 
+        message: "Snapchat account connected successfully", 
+        dataConsent: consentData.dataConsent 
       });
     } catch (error) {
       console.error("Error connecting Snapchat account:", error);
@@ -299,10 +257,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/snapchat/refresh", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-      await pushToAgentWorker('run-agent-workflow', { userId: user.id });
-      res.json({ message: "Data refresh and analysis has been queued." });
+
+      if (!user.snapchatClientId || !user.snapchatApiKey) {
+        return res.status(400).json({ message: "Snapchat credentials not found" });
+      }
+
+      const snapchatData = await fetchSnapchatData(user.snapchatClientId, user.snapchatApiKey);
+      await storage.saveSnapchatData(user.id, snapchatData);
+
+      res.json({ message: "Snapchat data refreshed successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Error queuing data refresh and analysis" });
+      res.status(500).json({ message: "Error refreshing Snapchat data" });
     }
   });
 
@@ -323,40 +288,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/subscription/upgrade", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
-      const { plan, billingPeriod } = req.body;
+      const { plan } = req.body;
 
       if (plan !== "premium") {
         return res.status(400).json({ message: "Invalid subscription plan" });
       }
 
-      // Determine PayPal plan ID based on billing period
-      const planId = billingPeriod === "yearly"
-        ? process.env.PAYPAL_YEARLY_PLAN_ID
-        : process.env.PAYPAL_MONTHLY_PLAN_ID;
+      // Set expiration to 30 days from now
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 30);
 
-      if (!planId) {
-        // Fallback to direct upgrade if PayPal not configured
-        const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 30);
-        await storage.updateUserSubscription(user.id, "premium", expiresAt);
-        return res.json({ message: "Subscription upgraded successfully" });
-      }
+      await storage.updateUserSubscription(user.id, "premium", expiresAt);
 
-      // Create PayPal subscription
-      const subscription = await paypalService.createSubscription(
-        planId,
-        user,
-        `${process.env.APP_URL}/subscription/success`,
-        `${process.env.APP_URL}/pricing`
-      );
-
-      res.json({
-        message: "Redirect to PayPal for payment",
-        approvalUrl: subscription.approvalUrl,
-        subscriptionId: subscription.subscriptionId
-      });
+      res.json({ message: "Subscription upgraded successfully" });
     } catch (error) {
-      console.error("Error upgrading subscription:", error);
       res.status(500).json({ message: "Error upgrading subscription" });
     }
   });
@@ -402,11 +347,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Premium subscription required" });
       }
 
-      await pushToAgentWorker('run-agent-workflow', { userId: user.id });
+      // Get the latest Snapchat data
+      const snapchatData = await storage.getLatestSnapchatData(user.id);
 
-      res.json({ message: "Insight generation has been queued." });
+      if (!snapchatData) {
+        return res.status(404).json({ message: "No Snapchat data found to analyze" });
+      }
+
+      // Generate AI insight
+      const insightText = await generateAiInsight(snapchatData.data);
+
+      // Save the insight
+      const insight = await storage.saveAiInsight(user.id, insightText);
+
+      res.json(insight);
     } catch (error) {
-      res.status(500).json({ message: "Error queuing insight generation" });
+      res.status(500).json({ message: "Error generating AI insight" });
     }
   });
 
@@ -442,7 +398,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         req
       );
 
-      res.json({
+      res.json({ 
         message: "Data preferences updated successfully",
         preferences: validatedPrefs
       });
@@ -490,7 +446,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         req
       );
 
-      res.json({
+      res.json({ 
         message: `Consent preferences ${consent ? "accepted" : "declined"} successfully`,
         consentStatus: consent
       });
@@ -602,8 +558,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!snapchatData) {
         return res.status(404).json({ message: "No Snapchat data found. Please sync your account first." });
       }
-
-      const segments = generateAudienceSegments(snapchatData.data as any);
+      
+      const segments = generateAudienceSegments(snapchatData);
       res.json(segments);
     } catch (error) {
       console.error("Error fetching audience segments:", error);
@@ -697,8 +653,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const health = await healthMonitor.getHealthStatus();
 
       // Return appropriate HTTP status based on health
-      const statusCode = health.status === 'healthy' ? 200 :
-        health.status === 'degraded' ? 200 : 503;
+      const statusCode = health.status === 'healthy' ? 200 : 
+                        health.status === 'degraded' ? 200 : 503;
 
       res.status(statusCode).json(health);
     } catch (error) {
