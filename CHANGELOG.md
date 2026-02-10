@@ -1,25 +1,29 @@
+
 # Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- Implemented a new agent-based system for data fetching, analysis, and processing using the Google Agent Development Kit (ADK).
+- Created the following agents:
+    - `OrchestratorAgent`: Manages the entire data fetching and processing workflow.
+    - `SnapchatDataFetcherAgent`: Fetches data from the Snapchat API.
+    - `DataAnalysisAgent`: Analyzes Snapchat data and generates insights.
+    - `TestAgent`: Validates the data and insights.
+    - `DatabaseAgent`: Stores the data and insights in the database.
+    - `SafetyAgent`: Screens the data and insights for PII and inappropriate content.
+    - `EvaluationAgent`: Evaluates the quality of the generated insights.
+- Created a new `LoggingPlugin` to log all agent invocations.
+- Implemented a scalable agent management system using a job queue.
+- Integrated the agent-based system with the existing API routes.
+- Aligned the implementation with the best practices of the ADK, including the use of Artifacts and Callbacks.
+
 ### Changed
-- Migrated CI/CD workflow to `pnpm`.
-- Updated core dependencies to latest versions:
-  - `typescript` -> `5.6.3`
-  - `vite` -> `7.3.1`
-  - `react` -> `19.2.4`
-  - `@paypal/paypal-server-sdk` -> `2.2.0`
-  - `drizzle-orm` -> `0.45.1`
-- Refactored `job-scheduler.ts` to use explicit Redis URL.
-- Refactored `competitor-analysis.ts` to include `analyzeCompetitors`.
-- Updated `server/types.d.ts` to match new `SnapchatData` structure.
-- Removed `allowedHosts` from Vite config.
-- Cleaned up duplicate dependencies.
+- Updated the `README.md` file to include a description of the new agent-based system.
+- Updated the `PRODUCTION_READINESS.md` file to include a "Future Considerations" section.
 
-### Fixed
-- Fixed TypeScript errors in `resend` by updating TypeScript version.
-- Fixed various type errors in server services (`paypal.ts`, `export.ts`, `storage.ts`).
-- Removed misplaced `server/routes/paypal-webhook.ts`.
-
-## [1.0.0] - 2025-01-20
-- Initial release.

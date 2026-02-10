@@ -14,6 +14,8 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { z } from "zod";
+import { OrchestratorAgent } from "./agents/orchestrator-agent";
+import http from "http";
 import { 
   insertUserSchema, 
   insertSnapchatCredentialsSchema, 
@@ -27,6 +29,7 @@ import {
   import { generateAutomatedReport } from "./services/automated-reports";
   import { generateAudienceSegments } from "./services/audience-segmentation";
   import { generateCompetitorAnalysis } from "./services/competitor-analysis";
+import { agentJobQueue } from "./services/job-scheduler";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { setupOAuth } from "./oauth";
@@ -257,17 +260,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/snapchat/refresh", isAuthenticated, async (req, res) => {
     try {
       const user = req.user as User;
+      const options = {
+        hostname: "localhost",
+        port: 5001,
+        path: "/run-agent-workflow",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
 
-      if (!user.snapchatClientId || !user.snapchatApiKey) {
-        return res.status(400).json({ message: "Snapchat credentials not found" });
-      }
+      const apiReq = http.request(options, (apiRes) => {
+        let data = "";
+        apiRes.on("data", (chunk) => {
+          data += chunk;
+        });
+        apiRes.on("end", () => {
+          res.json(JSON.parse(data));
+        });
+      });
 
-      const snapchatData = await fetchSnapchatData(user.snapchatClientId, user.snapchatApiKey);
-      await storage.saveSnapchatData(user.id, snapchatData);
+      apiReq.on("error", (error) => {
+        res.status(500).json({ message: "Error calling Python API" });
+      });
 
-      res.json({ message: "Snapchat data refreshed successfully" });
+      apiReq.write(JSON.stringify({ userId: user.id }));
+      apiReq.end();
     } catch (error) {
-      res.status(500).json({ message: "Error refreshing Snapchat data" });
+      res.status(500).json({ message: "Error refreshing and analyzing data" });
     }
   });
 
@@ -347,20 +367,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Premium subscription required" });
       }
 
-      // Get the latest Snapchat data
-      const snapchatData = await storage.getLatestSnapchatData(user.id);
+      const options = {
+        hostname: "localhost",
+        port: 5001,
+        path: "/run-agent-workflow",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
 
-      if (!snapchatData) {
-        return res.status(404).json({ message: "No Snapchat data found to analyze" });
-      }
+      const apiReq = http.request(options, (apiRes) => {
+        let data = "";
+        apiRes.on("data", (chunk) => {
+          data += chunk;
+        });
+        apiRes.on("end", () => {
+          res.json(JSON.parse(data));
+        });
+      });
 
-      // Generate AI insight
-      const insightText = await generateAiInsight(snapchatData.data);
+      apiReq.on("error", (error) => {
+        res.status(500).json({ message: "Error calling Python API" });
+      });
 
-      // Save the insight
-      const insight = await storage.saveAiInsight(user.id, insightText);
-
-      res.json(insight);
+      apiReq.write(JSON.stringify({ userId: user.id }));
+      apiReq.end();
     } catch (error) {
       res.status(500).json({ message: "Error generating AI insight" });
     }
