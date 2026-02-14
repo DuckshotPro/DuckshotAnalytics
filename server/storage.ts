@@ -23,7 +23,7 @@ import {
   InsertJobExecutionLog,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, inArray, ne, sql } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 
@@ -96,6 +96,14 @@ export interface IStorage {
    * @returns Number of records cleaned
    */
   cleanupOldData(userId: number, cutoffDate: Date): Promise<number>;
+
+  /**
+   * Cleans up all old data for all users based on their retention policy
+   * Premium users: 90 days retention
+   * Free users: 30 days retention
+   * @returns Total number of records cleaned
+   */
+  cleanupAllOldData(): Promise<number>;
 
   /**
    * Gets the latest Snapchat data for a user
@@ -460,7 +468,7 @@ export class DatabaseStorage implements IStorage {
         and(
           eq(snapchatData.userId, userId),
           // Use SQL comparison for date
-          db.sql`${snapchatData.fetchedAt} < ${cutoffDate}`
+          sql`${snapchatData.fetchedAt} < ${cutoffDate}`
         )
       );
 
@@ -469,11 +477,73 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(aiInsights.userId, userId),
-          db.sql`${aiInsights.createdAt} < ${cutoffDate}`
+          sql`${aiInsights.createdAt} < ${cutoffDate}`
         )
       );
 
     return (deletedSnapchatData as any).rowCount + (deletedInsights as any).rowCount || 0;
+  }
+
+  /**
+   * Cleans up all old data for all users based on their retention policy
+   * Premium users: 90 days retention
+   * Free users: 30 days retention
+   * @returns Total number of records cleaned
+   */
+  async cleanupAllOldData(): Promise<number> {
+    const premiumCutoff = new Date();
+    premiumCutoff.setDate(premiumCutoff.getDate() - 90);
+
+    const freeCutoff = new Date();
+    freeCutoff.setDate(freeCutoff.getDate() - 30);
+
+    // Helper subqueries to identify user groups
+    const premiumUserIds = db.select({ id: users.id }).from(users).where(eq(users.subscription, 'premium'));
+    const freeUserIds = db.select({ id: users.id }).from(users).where(ne(users.subscription, 'premium'));
+
+    // 1. Clean up old Snapchat data for premium users
+    const delSnapchatPremium = await db.delete(snapchatData)
+      .where(
+        and(
+          inArray(snapchatData.userId, premiumUserIds),
+          sql`${snapchatData.fetchedAt} < ${premiumCutoff}`
+        )
+      );
+
+    // 2. Clean up old Snapchat data for free users
+    const delSnapchatFree = await db.delete(snapchatData)
+      .where(
+        and(
+          inArray(snapchatData.userId, freeUserIds),
+          sql`${snapchatData.fetchedAt} < ${freeCutoff}`
+        )
+      );
+
+    // 3. Clean up old AI insights for premium users
+    const delInsightsPremium = await db.delete(aiInsights)
+      .where(
+        and(
+          inArray(aiInsights.userId, premiumUserIds),
+          sql`${aiInsights.createdAt} < ${premiumCutoff}`
+        )
+      );
+
+    // 4. Clean up old AI insights for free users
+    const delInsightsFree = await db.delete(aiInsights)
+      .where(
+        and(
+          inArray(aiInsights.userId, freeUserIds),
+          sql`${aiInsights.createdAt} < ${freeCutoff}`
+        )
+      );
+
+    const totalCleaned =
+      ((delSnapchatPremium as any).rowCount || 0) +
+      ((delSnapchatFree as any).rowCount || 0) +
+      ((delInsightsPremium as any).rowCount || 0) +
+      ((delInsightsFree as any).rowCount || 0);
+
+    return totalCleaned;
   }
 
   /**

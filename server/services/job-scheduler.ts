@@ -362,17 +362,8 @@ class SnapchatETLScheduler implements JobScheduler {
       try {
         console.log('🧹 Starting data cleanup...');
 
-        const users = await storage.getAllUsers();
-        let totalCleaned = 0;
-
-        for (const user of users) {
-          const retentionDays = user.subscription === 'premium' ? 90 : 30;
-          const cutoffDate = new Date();
-          cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
-
-          const cleaned = await storage.cleanupOldData(user.id, cutoffDate);
-          totalCleaned += cleaned;
-        }
+        // Bulk cleanup optimization: One set of queries instead of N+1
+        const totalCleaned = await storage.cleanupAllOldData();
 
         console.log(`✅ Data cleanup completed. Cleaned ${totalCleaned} old records`);
 
