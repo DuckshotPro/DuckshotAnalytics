@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Eye, EyeOff } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -148,30 +148,9 @@ export default function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input
-                                type={showLoginPassword ? "text" : "password"}
-                                placeholder="Enter your password"
-                                className="pr-10"
-                                {...field}
-                              />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                              onClick={() => setShowLoginPassword(!showLoginPassword)}
-                              aria-label={showLoginPassword ? "Hide password" : "Show password"}
-                            >
-                              {showLoginPassword ? (
-                                <EyeOff className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <Eye className="h-4 w-4 text-muted-foreground" />
-                              )}
-                            </Button>
-                          </div>
+                          <FormControl>
+                            <PasswordInput placeholder="Enter your password" {...field} />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -237,30 +216,9 @@ export default function AuthPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Password</FormLabel>
-                            <div className="relative">
-                              <FormControl>
-                                <Input
-                                  type={showRegisterPassword ? "text" : "password"}
-                                  placeholder="Create a password"
-                                  className="pr-10"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                                aria-label={showRegisterPassword ? "Hide password" : "Show password"}
-                              >
-                                {showRegisterPassword ? (
-                                  <EyeOff className="h-4 w-4 text-muted-foreground" />
-                                ) : (
-                                  <Eye className="h-4 w-4 text-muted-foreground" />
-                                )}
-                              </Button>
-                            </div>
+                            <FormControl>
+                              <PasswordInput placeholder="Create a password" {...field} />
+                            </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}

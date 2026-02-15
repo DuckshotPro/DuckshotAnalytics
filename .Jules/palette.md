@@ -16,3 +16,7 @@
 ## 2026-05-22 - Trend Indicators & Screen Readers
 **Learning:** Visual trend indicators (arrows + color) are insufficient for screen readers. `StatCard` displayed percentage change without indicating "increase" or "decrease" in text.
 **Action:** Always append `sr-only` text (e.g., "Increased by") to trend indicators and hide decorative icons with `aria-hidden="true"`.
+
+## 2026-02-02 - PasswordInput Standardization
+**Learning:** `AuthPage` had a broken manual implementation of password toggling. Using the existing `PasswordInput` component not only fixed the bug but ensures consistent behavior (Eye/EyeOff icon usage) and accessibility across the app.
+**Action:** Always check for existing form components (like `PasswordInput`, `DateInput`) before implementing custom form controls.
