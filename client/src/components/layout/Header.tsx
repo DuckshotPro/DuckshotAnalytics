@@ -56,9 +56,9 @@ export function Header() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="cursor-pointer">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0" aria-label="Open user menu">
                     <UserAvatar username={user.username} />
-                  </div>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <div className="px-2 py-1.5 text-sm font-medium">
@@ -99,6 +99,7 @@ export function Header() {
               variant="ghost"
               className="md:hidden"
               onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open mobile menu"
             >
               <Menu className="h-6 w-6" />
             </Button>

@@ -8,9 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { Eye, EyeOff } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const authSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
@@ -118,48 +126,74 @@ export default function AuthPage() {
               </TabsList>
 
               <TabsContent value="login" forceMount style={{ display: activeTab !== "login" ? 'none' : 'block' }}>
-                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-username">Username</Label>
-                    <Input
-                      id="login-username"
-                      type="text"
-                      placeholder="Enter your username"
-                      {...loginForm.register("username")}
+                <Form {...loginForm}>
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    <FormField
+                      control={loginForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your username" autoComplete="username" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    {loginForm.formState.errors.username && (
-                      <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
-                    )}
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password">Password</Label>
-                    <Input
-                      id="login-password"
-                      type="password"
-                      placeholder="Enter your password"
-                      {...loginForm.register("password")}
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Input
+                                type={showLoginPassword ? "text" : "password"}
+                                placeholder="Enter your password"
+                                className="pr-10"
+                                autoComplete="current-password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                              onClick={() => setShowLoginPassword(!showLoginPassword)}
+                              aria-label={showLoginPassword ? "Hide password" : "Show password"}
+                            >
+                              {showLoginPassword ? (
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <Eye className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </Button>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    {loginForm.formState.errors.password && (
-                      <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
-                    )}
-                  </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    disabled={loginMutation.isPending}
-                  >
-                    {loginMutation.isPending ? "Signing in..." : "Sign in"}
-                  </Button>
-                </form>
+                    <Button
+                      type="submit"
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                      isLoading={loginMutation.isPending}
+                    >
+                      {loginMutation.isPending ? "Signing in..." : "Sign in"}
+                    </Button>
+                  </form>
+                </Form>
               </TabsContent>
 
               <TabsContent value="register" forceMount style={{ display: activeTab !== "register" ? 'none' : 'block' }}>
                 {showEmailSent ? (
                   <div className="space-y-4 text-center py-8">
                     <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
@@ -172,6 +206,7 @@ export default function AuthPage() {
                       <p className="text-sm text-gray-500">
                         Didn't receive the email? Check your spam folder or{' '}
                         <button
+                          type="button"
                           onClick={() => setActiveTab('login')}
                           className="text-primary hover:underline"
                         >
@@ -182,41 +217,67 @@ export default function AuthPage() {
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="register-username">Username</Label>
-                      <Input
-                        id="register-username"
-                        type="text"
-                        placeholder="Choose a username"
-                        {...registerForm.register("username")}
+                  <Form {...registerForm}>
+                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Choose a username" autoComplete="username" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                      {registerForm.formState.errors.username && (
-                        <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
-                      )}
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="register-password">Password</Label>
-                      <Input
-                        id="register-password"
-                        type="password"
-                        placeholder="Create a password"
-                        {...registerForm.register("password")}
+                      <FormField
+                        control={registerForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <div className="relative">
+                              <FormControl>
+                                <Input
+                                  type={showRegisterPassword ? "text" : "password"}
+                                  placeholder="Create a password"
+                                  className="pr-10"
+                                  autoComplete="new-password"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                                aria-label={showRegisterPassword ? "Hide password" : "Show password"}
+                              >
+                                {showRegisterPassword ? (
+                                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                ) : (
+                                  <Eye className="h-4 w-4 text-muted-foreground" />
+                                )}
+                              </Button>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                      {registerForm.formState.errors.password && (
-                        <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
-                      )}
-                    </div>
 
-                    <Button
-                      type="submit"
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                      disabled={registerMutation.isPending}
-                    >
-                      {registerMutation.isPending ? "Creating account..." : "Create account"}
-                    </Button>
-                  </form>
+                      <Button
+                        type="submit"
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                        isLoading={registerMutation.isPending}
+                      >
+                        {registerMutation.isPending ? "Creating account..." : "Create account"}
+                      </Button>
+                    </form>
+                  </Form>
                 )}
               </TabsContent>
             </Tabs>
@@ -234,7 +295,7 @@ export default function AuthPage() {
           <div className="space-y-6">
             <div className="flex items-start space-x-3">
               <div className="mt-1 bg-white/20 rounded-full p-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </div>
@@ -242,7 +303,7 @@ export default function AuthPage() {
             </div>
             <div className="flex items-start space-x-3">
               <div className="mt-1 bg-white/20 rounded-full p-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </div>
@@ -250,7 +311,7 @@ export default function AuthPage() {
             </div>
             <div className="flex items-start space-x-3">
               <div className="mt-1 bg-white/20 rounded-full p-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </div>
