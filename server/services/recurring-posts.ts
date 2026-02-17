@@ -9,8 +9,9 @@ import {
     createScheduledPost,
     getScheduledPostsByUser,
     updateScheduledPost,
+    getRecurringPosts,
 } from "../db/queries/snapchat-scheduler";
-import { type InsertSnapchatScheduledContent, ScheduledContentStatus } from "@shared/schema";
+import { type InsertSnapchatScheduledContent, ScheduledContentStatus, type SnapchatScheduledContent } from "@shared/schema";
 import { logger } from "../logger";
 
 /**
@@ -187,12 +188,48 @@ export async function processRecurringPosts(): Promise<{
         let totalProcessed = 0;
         let totalCreated = 0;
 
-        // This would normally query for all users' recurring posts
-        // For now, we'll focus on the logic
+        // Query database for active recurring posts (scheduled or recently published)
+        const recurringPosts = await getRecurringPosts(90); // 90 day lookback
 
-        // TODO: Query database for published recurring posts that need new instances
+        // Group posts into chains by identity
+        const chains = new Map<string, SnapchatScheduledContent[]>();
 
-        logger.info(`Recurring posts: Processed ${totalProcessed}, created ${totalCreated} new instances`);
+        for (const post of recurringPosts) {
+            // Create a stable identity key for the recurring chain
+            const patternKey = post.recurringPattern ?
+                Object.keys(post.recurringPattern as object).sort().map(k => `${k}:${(post.recurringPattern as any)[k]}`).join(',') :
+                'no-pattern';
+
+            const key = `${post.userId}|${post.snapchatAccountId}|${post.contentType}|${post.mediaUrl}|${post.caption || ''}|${patternKey}`;
+
+            if (!chains.has(key)) {
+                chains.set(key, []);
+            }
+            chains.get(key)!.push(post);
+        }
+
+        totalProcessed = chains.size;
+
+        // Process each chain to see if it needs new instances
+        for (const [key, posts] of chains.entries()) {
+            // Posts are already sorted by scheduledFor descending from the query
+            const latestPost = posts[0];
+
+            // Check if there are any upcoming scheduled instances
+            const hasScheduled = posts.some(p => p.status === ScheduledContentStatus.SCHEDULED);
+
+            if (!hasScheduled && latestPost.status === ScheduledContentStatus.PUBLISHED) {
+                // If no scheduled instances exist and the latest was published, create more
+                const createdIds = await createRecurringInstances(
+                    latestPost as any,
+                    latestPost.recurringPattern as RecurringPattern
+                );
+                totalCreated += createdIds.length;
+                logger.info(`Created ${createdIds.length} new instances for chain ${key}`);
+            }
+        }
+
+        logger.info(`Recurring posts: Processed ${totalProcessed} chains, created ${totalCreated} new instances`);
 
         return {
             processed: totalProcessed,

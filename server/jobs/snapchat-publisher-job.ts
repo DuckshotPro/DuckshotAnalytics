@@ -8,6 +8,7 @@
 import cron from "node-cron";
 import { SnapchatSchedulerService } from "../services/snapchat-scheduler";
 import { SnapchatPublisherService } from "../services/snapchat-publisher";
+import { RecurringPostsHandler } from "../services/recurring-posts";
 import { logger } from "../logger";
 
 /**
@@ -22,6 +23,10 @@ async function processDuePosts() {
 
         if (duePosts.length === 0) {
             logger.info("Snapchat Publisher Job: No posts due for publishing");
+
+            // Still process recurring posts to see if any new instances need to be created
+            // (e.g. if a post was published since the last run)
+            await RecurringPostsHandler.processRecurringPosts();
             return;
         }
 
@@ -50,6 +55,9 @@ async function processDuePosts() {
                     `Snapchat Publisher Job: Failed to publish post ${result.postId}: ${result.error}`
                 );
             });
+
+        // Process recurring posts to create new instances if needed
+        await RecurringPostsHandler.processRecurringPosts();
 
     } catch (error: any) {
         logger.error("Snapchat Publisher Job: Error processing due posts:", error);

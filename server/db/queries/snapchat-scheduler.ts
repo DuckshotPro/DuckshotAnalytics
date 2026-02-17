@@ -5,7 +5,7 @@
  * Provides type-safe queries using Drizzle ORM.
  */
 
-import { eq, and, lte, gte, desc, asc, sql } from "drizzle-orm";
+import { eq, and, or, lte, gte, desc, asc, sql } from "drizzle-orm";
 import { db } from "../../db";
 import {
     snapchatScheduledContent,
@@ -54,6 +54,33 @@ export async function getScheduledPostsByUser(
         .from(snapchatScheduledContent)
         .where(and(...conditions))
         .orderBy(asc(snapchatScheduledContent.scheduledFor));
+}
+
+/**
+ * Get active recurring posts (scheduled or recently published)
+ * @param days - Number of days to look back for published posts (default: 90)
+ * @returns Array of recurring scheduled content
+ */
+export async function getRecurringPosts(days: number = 90) {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    return await db
+        .select()
+        .from(snapchatScheduledContent)
+        .where(
+            and(
+                eq(snapchatScheduledContent.isRecurring, true),
+                or(
+                    eq(snapchatScheduledContent.status, ScheduledContentStatus.SCHEDULED),
+                    and(
+                        eq(snapchatScheduledContent.status, ScheduledContentStatus.PUBLISHED),
+                        gte(snapchatScheduledContent.scheduledFor, cutoffDate)
+                    )
+                )
+            )
+        )
+        .orderBy(desc(snapchatScheduledContent.scheduledFor));
 }
 
 /**
