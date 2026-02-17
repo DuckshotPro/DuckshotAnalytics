@@ -6,14 +6,14 @@ import { UserAvatar } from "@/components/common/UserAvatar";
 import { useAuth } from "@/hooks/use-auth";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { Button } from "@/components/ui/button";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User, Menu, BarChart, Shield, Lock } from "lucide-react";
+import { LogOut, Settings, User, Menu, BarChart, Shield, Lock, Calendar } from "lucide-react";
 
 export function Header() {
   const { user, logoutMutation } = useAuth();
@@ -35,7 +35,7 @@ export function Header() {
         <Link href="/" className="flex items-center space-x-2">
           <Logo size="medium" />
         </Link>
-        
+
         {user ? (
           <>
             <nav className="hidden md:flex space-x-6 items-center">
@@ -45,17 +45,20 @@ export function Header() {
               <Link href="/reports" className="text-foreground font-medium hover:text-primary transition-colors">
                 Reports
               </Link>
+              <Link href="/snapchat/scheduler" className="text-foreground font-medium hover:text-primary transition-colors">
+                Scheduler
+              </Link>
               <Link href="/settings" className="text-foreground font-medium hover:text-primary transition-colors">
                 Settings
               </Link>
-              
+
               <PremiumBadge isPremium={user.subscription === "premium"} />
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="cursor-pointer">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0" aria-label="Open user menu">
                     <UserAvatar username={user.username} />
-                  </div>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <div className="px-2 py-1.5 text-sm font-medium">
@@ -81,7 +84,7 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={handleLogout}
                     className="text-red-500 focus:text-red-500 cursor-pointer"
                   >
@@ -91,19 +94,19 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>
-            
-            <Button 
-              variant="ghost" 
-              className="md:hidden" 
+
+            <Button
+              variant="ghost"
+              className="md:hidden"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open mobile menu"
             >
               <Menu className="h-6 w-6" />
             </Button>
-            
-            <MobileMenu 
-              isOpen={mobileMenuOpen} 
-              onClose={() => setMobileMenuOpen(false)} 
+
+            <MobileMenu
+              isOpen={mobileMenuOpen}
+              onClose={() => setMobileMenuOpen(false)}
               isPremium={user.subscription === "premium"}
               username={user.username}
             />
