@@ -42,6 +42,7 @@ import { sendVerificationEmail } from './services/email-service';
 import crypto from 'crypto';
 import { hashToken } from './utils/token-hash';
 import { registrationLimiter } from './middleware/rate-limit';
+import snapchatSchedulerRouter from "./routes/snapchat-scheduler";
 
 const scryptAsync = promisify(scrypt);
 
@@ -306,6 +307,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error queuing data refresh and analysis" });
     }
   });
+
+  // Snapchat Scheduler routes
+  app.use("/api/snapchat", isAuthenticated, snapchatSchedulerRouter);
 
   // Subscription routes
   app.get("/api/subscription", isAuthenticated, async (req, res) => {
