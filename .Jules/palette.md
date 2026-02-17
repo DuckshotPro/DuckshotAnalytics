@@ -21,3 +21,7 @@
 ## 2026-06-15 - Empty States Strategy
 **Learning:** When adding empty states to data tables, replacing the entire table (including headers) with the empty state is often better than keeping empty headers. It reduces clutter and allows for a more focused, helpful message and action.
 **Action:** For tables with no data, conditionally render a dedicated empty state component instead of an empty table body.
+
+## 2026-06-16 - Semantic Triggers for Dropdowns
+**Learning:** Found `DropdownMenuTrigger` wrapping a `div` element. While `cursor-pointer` mimics interactivity visually, it fails for keyboard users. Radix UI's `asChild` prop requires the child to be a functional button to receive keyboard events and ARIA attributes correctly.
+**Action:** Replace `div` wrappers with semantic `<Button>` components (using `variant="ghost"` for styling) inside accessible triggers.
