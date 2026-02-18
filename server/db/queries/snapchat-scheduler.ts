@@ -153,6 +153,39 @@ export async function updatePostStatus(
 }
 
 /**
+ * Update post analytics
+ * @param postId - The post ID
+ * @param analytics - The analytics data from Snapchat
+ * @returns Updated post
+ */
+export async function updatePostAnalytics(
+    postId: number,
+    analytics: any
+) {
+    const post = await getPostById(postId);
+
+    if (!post) {
+        throw new Error(`Post ${postId} not found`);
+    }
+
+    const currentMetadata = (post.metadata as Record<string, any>) || {};
+
+    const result = await db
+        .update(snapchatScheduledContent)
+        .set({
+            metadata: {
+                ...currentMetadata,
+                snapchatAnalytics: analytics,
+            },
+            updatedAt: new Date(),
+        })
+        .where(eq(snapchatScheduledContent.id, postId))
+        .returning();
+
+    return result[0];
+}
+
+/**
  * Delete a scheduled post
  * @param postId - The post ID
  * @returns Deleted post
@@ -268,6 +301,28 @@ export async function getSchedulerAnalytics(
             )
         )
         .limit(1);
+
+    return result[0];
+}
+
+/**
+ * Create a new analytics record for a specific post
+ * @param data - Analytics data including userId, scheduledContentId, and metrics
+ * @returns Created analytics record
+ */
+export async function createSchedulerAnalyticsRecord(data: {
+    userId: number;
+    scheduledContentId: number;
+    metrics: any;
+}) {
+    const result = await db
+        .insert(snapchatSchedulerAnalytics)
+        .values({
+            userId: data.userId,
+            scheduledContentId: data.scheduledContentId,
+            metrics: data.metrics,
+        })
+        .returning();
 
     return result[0];
 }
