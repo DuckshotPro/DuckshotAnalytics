@@ -365,14 +365,29 @@ class SnapchatETLScheduler implements JobScheduler {
         const users = await storage.getAllUsers();
         let totalCleaned = 0;
 
+        // Optimized parallel cleanup with concurrency limit
+        const CONCURRENCY_LIMIT = 10;
+        const results: Promise<number>[] = [];
+        const executing = new Set<Promise<number>>();
+
         for (const user of users) {
           const retentionDays = user.subscription === 'premium' ? 90 : 30;
           const cutoffDate = new Date();
           cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
-          const cleaned = await storage.cleanupOldData(user.id, cutoffDate);
-          totalCleaned += cleaned;
+          const cleanupPromise = storage.cleanupOldData(user.id, cutoffDate);
+          results.push(cleanupPromise);
+          executing.add(cleanupPromise);
+
+          cleanupPromise.finally(() => executing.delete(cleanupPromise));
+
+          if (executing.size >= CONCURRENCY_LIMIT) {
+            await Promise.race(executing);
+          }
         }
+
+        const cleanedCounts = await Promise.all(results);
+        totalCleaned = cleanedCounts.reduce((acc, curr) => acc + curr, 0);
 
         console.log(`✅ Data cleanup completed. Cleaned ${totalCleaned} old records`);
 
