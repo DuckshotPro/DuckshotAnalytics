@@ -110,21 +110,32 @@ export const snapchatSchedulerAnalytics = pgTable("snapchat_scheduler_analytics"
     id: serial("id").primaryKey(),
     userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
 
-    // Metrics
-    totalScheduled: integer("total_scheduled").default(0).notNull(), // Total posts scheduled
-    totalPublished: integer("total_published").default(0).notNull(), // Total successfully published
-    totalFailed: integer("total_failed").default(0).notNull(), // Total failed
-    successRate: integer("success_rate").default(0).notNull(), // Success percentage (0-100)
+    // Link to specific content (for raw analytics events)
+    scheduledContentId: integer("scheduled_content_id").references(() => snapchatScheduledContent.id, { onDelete: "cascade" }),
+
+    // Metrics (Aggregated or Raw)
+    totalScheduled: integer("total_scheduled").default(0), // Total posts scheduled (aggregated)
+    totalPublished: integer("total_published").default(0), // Total successfully published (aggregated)
+    totalFailed: integer("total_failed").default(0), // Total failed (aggregated)
+    successRate: integer("success_rate").default(0), // Success percentage (0-100) (aggregated)
+
+    // Raw analytics data from Snapchat webhook
+    metrics: jsonb("metrics"),
 
     // Timing Analysis
     optimalPostingTimes: jsonb("optimal_posting_times"), // [{hour: 18, day: 'monday', avgEngagement: 1500}]
 
     // Timestamps
-    periodStart: timestamp("period_start").notNull(), // Start of analytics period
-    periodEnd: timestamp("period_end").notNull(), // End of analytics period
+    periodStart: timestamp("period_start"), // Start of analytics period (aggregated)
+    periodEnd: timestamp("period_end"), // End of analytics period (aggregated)
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+}, (table) => ({
+    // Index for fetching analytics by scheduled content
+    scheduledContentIdIdx: index("snapchat_scheduler_analytics_content_id_idx").on(table.scheduledContentId),
+    // Index for user-based analytics
+    userIdIdx: index("snapchat_scheduler_analytics_user_id_idx").on(table.userId),
+}));
 
 // ===================================
 // Zod Schemas for Validation

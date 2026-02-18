@@ -7,7 +7,13 @@
 
 import { Router } from "express";
 import crypto from "crypto";
-import { updatePostStatus, getPostById } from "../db/queries/snapchat-scheduler";
+import {
+    updatePostStatus,
+    getPostById,
+    updatePostAnalytics,
+    createSchedulerAnalyticsRecord,
+    calculateAndUpdateAnalytics
+} from "../db/queries/snapchat-scheduler";
 import { ScheduledContentStatus } from "@shared/schema";
 import { logger } from "../logger";
 
@@ -173,8 +179,30 @@ async function handleStoryAnalytics(event: any) {
         if (metadata?.scheduled_post_id) {
             const postId = parseInt(metadata.scheduled_post_id);
 
-            // TODO: Store analytics in snapchat_scheduler_analytics table
-            logger.info(`Snapchat Webhook: Analytics for post ${postId}:`, analytics);
+            // 1. Store analytics in post metadata (snapchat_scheduled_content table)
+            const post = await updatePostAnalytics(postId, analytics);
+
+            if (post) {
+                logger.info(`Snapchat Webhook: Analytics stored in post metadata for ${postId}`);
+
+                // 2. Insert raw analytics record into snapchat_scheduler_analytics table
+                await createSchedulerAnalyticsRecord({
+                    userId: post.userId,
+                    scheduledContentId: postId,
+                    metrics: analytics
+                });
+                logger.info(`Snapchat Webhook: Raw analytics record inserted into snapchat_scheduler_analytics for post ${postId}`);
+
+                // 3. Update the aggregated analytics record for the current month
+                const now = new Date();
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+                await calculateAndUpdateAnalytics(post.userId, startOfMonth, endOfMonth);
+                logger.info(`Snapchat Webhook: Updated aggregated analytics for user ${post.userId}`);
+            } else {
+                logger.warn(`Snapchat Webhook: Post ${postId} not found for analytics`);
+            }
         }
     } catch (error: any) {
         logger.error("Snapchat Webhook: Error handling story.analytics:", error);
