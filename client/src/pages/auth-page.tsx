@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { Eye, EyeOff } from "lucide-react";
 import {
   Form,
   FormControl,
